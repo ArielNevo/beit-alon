@@ -1,0 +1,22 @@
+rules_version = '2';
+// כללי אבטחה ל-Firestore — רק המיילים ברשימה יכולים לקרוא ולכתוב.
+// להדביק ב: Firebase Console ← Firestore Database ← Rules ← Publish
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function allowed() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in [
+          'arielkal@gmail.com',
+          'RINAT_EMAIL@gmail.com',      // ← להחליף במייל של רינת
+          'ARCHITECT_EMAIL@gmail.com'   // ← להחליף במייל של האדריכלית
+        ];
+    }
+    match /homes/{home}/{document=**} {
+      allow read, write: if allowed();
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

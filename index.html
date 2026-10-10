@@ -1,0 +1,1633 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F3EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171614" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="בית אלון">
+<meta name="robots" content="noindex, nofollow">
+<title>בית אלון · ניהול שיפוץ</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23B4583A'/><path d='M22 50 50 26l28 24v26a4 4 0 0 1-4 4H58V60H42v20H26a4 4 0 0 1-4-4z' fill='white'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F3EE; --surface:#FFFFFF; --surface-2:#FBF9F6; --sunk:#EFEAE2;
+  --ink:#24221F; --ink-2:#5E5A54; --ink-3:#8F8981; --line:#E6E0D7; --line-2:#D8D0C4;
+  --accent:#B4583A; --accent-2:#9A4529; --accent-soft:#F5E6DE; --accent-ink:#fff;
+  --olive:#5F6B3C; --olive-soft:#E9ECDD;
+  --todo:#8F8981; --todo-bg:#EFEBE5;
+  --prog:#2F6FB0; --prog-bg:#E2ECF7;
+  --wait:#B07A12; --wait-bg:#F8EDD3;
+  --stuck:#8A4FA0; --stuck-bg:#F0E5F4;
+  --late:#C2352B; --late-bg:#FBE3E0;
+  --done:#3E8B57; --done-bg:#E1F1E6;
+  --cancel:#ADA79E; --cancel-bg:#F1EEEA;
+  --p-ariel:#2F6FB0; --p-rinat:#B4583A; --p-arch:#5F6B3C; --p-other:#8F8981;
+  --shadow:0 1px 2px rgba(40,30,20,.06),0 4px 16px rgba(40,30,20,.06);
+  --shadow-lg:0 10px 40px rgba(40,30,20,.18);
+  --r:14px; --r-sm:10px;
+  --font:'Heebo',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+  --serif:'Frank Ruhl Libre','Heebo',Georgia,serif;
+  --nav-w:232px; --top-h:60px; --tab-h:64px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#171614; --surface:#211F1C; --surface-2:#1C1A18; --sunk:#141311;
+    --ink:#F1ECE4; --ink-2:#BDB5AA; --ink-3:#8A8379; --line:#34302B; --line-2:#433E37;
+    --accent:#E07F5E; --accent-2:#EC9677; --accent-soft:#3A251D; --accent-ink:#1A0F0A;
+    --olive:#A9B77A; --olive-soft:#2A2E1E;
+    --todo:#A39C92; --todo-bg:#2B2825;
+    --prog:#6FA5E0; --prog-bg:#1D2A38;
+    --wait:#E0B04D; --wait-bg:#352A15;
+    --stuck:#C08DD4; --stuck-bg:#2F2236;
+    --late:#F07467; --late-bg:#3C1F1C;
+    --done:#6CC48A; --done-bg:#1C3125;
+    --cancel:#7A746C; --cancel-bg:#262422;
+    --p-ariel:#6FA5E0; --p-rinat:#E07F5E; --p-arch:#A9B77A; --p-other:#8A8379;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+    --shadow-lg:0 10px 40px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.muted{color:var(--ink-2)} .faint{color:var(--ink-3)} .small{font-size:13px} .xs{font-size:12px}
+.num{font-variant-numeric:tabular-nums}
+.hide{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+svg.i.sm{width:16px;height:16px}
+
+/* ---------- layout ---------- */
+.topbar{position:sticky;top:0;z-index:30;height:calc(var(--top-h) + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;min-width:0}
+.brand .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);display:grid;place-items:center;color:#fff;flex:none}
+.brand .logo svg{width:20px;height:20px;fill:#fff;stroke:none}
+.brand b{font-family:var(--serif);font-size:20px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
+.brand span{font-size:12px;color:var(--ink-3);display:block;margin-top:-4px;white-space:nowrap}
+.top-sp{flex:1}
+.sync{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);padding:4px 10px;border-radius:99px;background:var(--surface);border:1px solid var(--line);white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--done);display:block}
+.sync.local i{background:var(--wait)} .sync.off i{background:var(--late)} .sync.saving i{background:var(--prog);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.me-btn{border:0;background:none;padding:0;display:flex;align-items:center;gap:8px}
+.layout{display:flex;min-height:calc(100vh - var(--top-h))}
+.sidenav{display:none}
+main{flex:1;min-width:0;padding:20px 16px calc(var(--tab-h) + 32px + env(safe-area-inset-bottom));max-width:1240px;margin-inline:auto;width:100%}
+.tabbar{position:fixed;inset-inline:0;bottom:0;z-index:30;height:calc(var(--tab-h) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);display:flex;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:var(--ink-3);font-size:11.5px;font-weight:500;position:relative}
+.tabbar a.on{color:var(--accent)}
+.tabbar a.on::before{content:"";position:absolute;top:0;width:28px;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+.tabbar svg.i{width:23px;height:23px}
+@media (min-width:900px){
+  .tabbar{display:none}
+  .sidenav{display:flex;flex-direction:column;gap:2px;width:var(--nav-w);flex:none;padding:18px 12px;border-inline-end:1px solid var(--line);position:sticky;top:var(--top-h);height:calc(100vh - var(--top-h));overflow:auto}
+  .sidenav a{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink-2);font-weight:500}
+  .sidenav a:hover{background:var(--sunk);color:var(--ink)}
+  .sidenav a.on{background:var(--accent-soft);color:var(--accent-2)}
+  .sidenav a .cnt{margin-inline-start:auto;font-size:12px;background:var(--late);color:#fff;border-radius:99px;padding:0 7px;min-width:20px;text-align:center}
+  .sidenav .sep{height:1px;background:var(--line);margin:10px 8px}
+  .sidenav .foot{margin-top:auto;font-size:12px;color:var(--ink-3);padding:8px 12px}
+  main{padding:28px 32px 48px}
+}
+@media (prefers-color-scheme: dark){ .sidenav a.on{color:var(--accent-2)} }
+
+/* ---------- common ---------- */
+h1,h2,h3{margin:0;font-weight:700;line-height:1.25}
+h1{font-family:var(--serif);font-size:28px}
+h2{font-size:17px}
+h3{font-size:15px}
+.page-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.page-head h1{flex:1;min-width:200px}
+.page-head p{margin:4px 0 0;color:var(--ink-2);font-size:14px;width:100%}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}
+.card-h{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.card-h h2{flex:1}
+.card-h a,.linkbtn{font-size:13px;color:var(--accent);text-decoration:none;background:none;border:0;padding:0;font-weight:500}
+.grid{display:grid;gap:16px}
+@media (min-width:900px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g-main{grid-template-columns:1.35fr 1fr} }
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);font-weight:500;font-size:14px;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.btn:hover{background:var(--sunk)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.pri:hover{background:var(--accent-2)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.danger{color:var(--late);border-color:color-mix(in srgb,var(--late) 40%,var(--line))}
+.btn.sm{height:32px;padding:0 12px;font-size:13px;border-radius:8px}
+.btn.icon{width:40px;padding:0}
+.btn.sm.icon{width:32px}
+.fab{position:fixed;inset-inline-start:auto;inset-inline-end:18px;bottom:calc(var(--tab-h) + 18px + env(safe-area-inset-bottom));z-index:25;height:54px;padding:0 20px 0 22px;border-radius:99px;border:0;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg)}
+.fab svg.i{width:22px;height:22px}
+@media (min-width:900px){ .fab{bottom:28px;inset-inline-end:32px} }
+.chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:99px;border:1px solid var(--line-2);background:var(--surface);font-size:13px;white-space:nowrap;font-weight:500;color:var(--ink-2)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.chip .c{font-size:11.5px;opacity:.75}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-inline:-16px;padding-inline:16px}
+.chips::-webkit-scrollbar{display:none}
+@media (min-width:900px){ .chips{flex-wrap:wrap;margin-inline:0;padding-inline:0} }
+.seg{display:inline-flex;background:var(--sunk);border-radius:11px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:8px;padding:6px 14px;font-size:13.5px;font-weight:500;color:var(--ink-2);white-space:nowrap}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field>span{font-size:12.5px;font-weight:500;color:var(--ink-2)}
+.inp,select.inp,textarea.inp{width:100%;min-height:42px;padding:9px 12px;border:1px solid var(--line-2);border-radius:10px;background:var(--surface);font-size:16px}
+textarea.inp{min-height:76px;resize:vertical;line-height:1.5}
+.inp:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+input[type=date].inp{direction:rtl;text-align:right}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid .full{grid-column:1/-1}
+.search{position:relative;flex:1;min-width:180px}
+.search .inp{padding-inline-start:38px;height:42px}
+.search svg{position:absolute;inset-inline-start:12px;top:11px;color:var(--ink-3)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.toolbar select.inp{width:auto;min-height:38px;height:38px;padding:0 10px;font-size:14px}
+.empty{text-align:center;padding:36px 16px;color:var(--ink-3)}
+.empty b{display:block;color:var(--ink-2);font-size:15px;margin-bottom:4px}
+.banner{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--wait-bg);color:var(--ink);border:1px solid color-mix(in srgb,var(--wait) 30%,transparent);margin-bottom:16px;font-size:14px}
+.banner b{display:block}
+.banner .btn{margin-inline-start:auto}
+
+/* status pill */
+.pill{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap;border:0;background:var(--todo-bg);color:var(--todo)}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.s-todo{--sc:var(--todo);--sb:var(--todo-bg)} .s-prog{--sc:var(--prog);--sb:var(--prog-bg)} .s-wait{--sc:var(--wait);--sb:var(--wait-bg)} .s-stuck{--sc:var(--stuck);--sb:var(--stuck-bg)} .s-late{--sc:var(--late);--sb:var(--late-bg)} .s-done{--sc:var(--done);--sb:var(--done-bg)} .s-cancel{--sc:var(--cancel);--sb:var(--cancel-bg)}
+.pill[class*=" s-"],.pill[class^="s-"]{background:var(--sb);color:var(--sc)}
+button.pill{cursor:pointer}
+button.pill:hover{filter:brightness(.96)}
+.prio{display:inline-block;width:8px;height:8px;border-radius:2px;transform:rotate(45deg);flex:none}
+.prio.p1{background:var(--late)} .prio.p2{background:var(--wait)} .prio.p3{background:var(--line-2)}
+.av{width:26px;height:26px;border-radius:50%;display:inline-grid;place-items:center;font-size:12px;font-weight:700;color:#fff;background:var(--p-other);flex:none;border:2px solid var(--surface)}
+.av.lg{width:34px;height:34px;font-size:14px}
+.avs{display:inline-flex}
+.avs .av+.av{margin-inline-start:-8px}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:6px;background:var(--sunk);color:var(--ink-2);white-space:nowrap}
+
+/* ---------- home ---------- */
+.hero{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin-bottom:18px}
+.hero .t{flex:1;min-width:240px}
+.eyebrow{font-size:13px;color:var(--ink-3);font-weight:500}
+.hero h1{font-size:30px;margin:2px 0 6px}
+.hero p{margin:0;color:var(--ink-2)}
+.scen{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.scen .lbl{font-size:12px;color:var(--ink-3);line-height:1.3}
+.scen .lbl b{display:block;color:var(--ink);font-size:13.5px}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+@media (min-width:700px){ .kpis{grid-template-columns:repeat(5,1fr)} }
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden}
+.kpi .k{font-size:12.5px;color:var(--ink-2);font-weight:500}
+.kpi .v{font-size:32px;font-weight:700;line-height:1.1;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--ink-3)}
+.kpi.key{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.kpi.key .k,.kpi.key .s{color:color-mix(in srgb,var(--accent-ink) 80%,transparent)}
+.kpi.alert .v{color:var(--late)}
+.kpi .ring{position:absolute;inset-inline-end:12px;bottom:12px;width:44px;height:44px}
+.list{display:flex;flex-direction:column}
+.trow{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:8px;min-height:56px}
+.trow:last-child{border-bottom:0}
+.trow:hover{background:var(--surface-2)}
+.trow .tm{flex:1;min-width:0}
+.trow .tt{font-weight:500;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.trow.done .tt{text-decoration:line-through;color:var(--ink-3)}
+.trow .meta{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-3);margin-top:2px;flex-wrap:wrap}
+.trow .due{font-size:12.5px;text-align:end;white-space:nowrap;color:var(--ink-2);flex:none}
+.trow .due.late{color:var(--late);font-weight:600}
+.trow .due.soon{color:var(--wait);font-weight:600}
+.sbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--sc,var(--todo));background:transparent;display:grid;place-items:center;flex:none;color:var(--sc);padding:0}
+.sbtn.s-done{background:var(--done);border-color:var(--done);color:#fff}
+.sbtn.s-prog{background:conic-gradient(var(--prog) 0 50%,transparent 0)}
+.sbtn.s-cancel{border-style:dashed}
+.sbtn svg{width:16px;height:16px;stroke-width:2.6}
+.sbtn:hover{transform:scale(1.08)}
+.phase-row{display:grid;grid-template-columns:minmax(110px,1.2fr) 2fr auto;gap:10px;align-items:center;padding:7px 0;font-size:13.5px;text-decoration:none;color:inherit}
+.bar{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden;display:flex}
+.bar i{display:block;height:100%;background:var(--olive)}
+.dist{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--sunk);margin:6px 0 10px}
+.dist i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend span::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--sc)}
+.ms{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.ms:last-child{border-bottom:0}
+.ms .d{width:48px;text-align:center;flex:none;background:var(--sunk);border-radius:10px;padding:4px 0;line-height:1.15}
+.ms .d b{display:block;font-size:18px}
+.ms .d span{font-size:11px;color:var(--ink-2)}
+.ms.key .d{background:var(--accent);color:var(--accent-ink)} .ms.key .d span{color:inherit}
+.ms .n{flex:1;min-width:0;font-weight:500}
+.dec{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.dec:last-child{border-bottom:0}
+.dec .no{width:28px;height:28px;border-radius:8px;background:var(--accent-soft);color:var(--accent-2);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.dec .tx{flex:1;min-width:0;font-weight:500;font-size:14px}
+
+/* ---------- tasks ---------- */
+.group{margin-bottom:18px}
+.group-h{display:flex;align-items:center;gap:10px;padding:6px 4px 8px;position:sticky;top:var(--top-h);background:var(--bg);z-index:2}
+.group-h h3{font-size:14.5px}
+.group-h .bar{flex:1;max-width:160px;height:6px}
+.group-h .c{font-size:12.5px;color:var(--ink-3)}
+.group .card{padding:4px 12px}
+
+/* ---------- board ---------- */
+.board{display:flex;gap:12px;overflow-x:auto;padding-bottom:16px;scroll-snap-type:x mandatory;margin-inline:-16px;padding-inline:16px;align-items:flex-start}
+.col{flex:0 0 min(84vw,300px);background:var(--sunk);border-radius:var(--r);padding:10px;scroll-snap-align:start;max-height:calc(100vh - 220px);display:flex;flex-direction:column}
+@media (min-width:900px){ .board{margin-inline:0;padding-inline:0} .col{flex-basis:270px;max-height:calc(100vh - 190px)} }
+.col-h{display:flex;align-items:center;gap:8px;padding:2px 4px 10px;font-weight:600;font-size:14px}
+.col-h .n{margin-inline-start:auto;font-size:12.5px;color:var(--ink-3);font-weight:500}
+.col-b{display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:60px;border-radius:10px;padding:2px}
+.col.over .col-b{background:color-mix(in srgb,var(--accent) 10%,transparent);outline:2px dashed var(--accent)}
+.kcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:grab;border-inline-start:3px solid var(--sc,var(--line))}
+.kcard:active{cursor:grabbing}
+.kcard.dragging{opacity:.4}
+.kcard .tt{font-weight:500;font-size:14px;margin-bottom:6px}
+.kcard .meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-3)}
+.kcard .meta .sp{flex:1}
+
+/* ---------- gantt ---------- */
+.gwrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:auto;max-height:calc(100vh - 230px);position:relative}
+.gantt{position:relative;--lw:230px}
+@media (max-width:700px){ .gantt{--lw:132px} }
+.g-head{position:sticky;top:0;z-index:5;background:var(--surface);display:flex;border-bottom:1px solid var(--line)}
+.g-corner{position:sticky;inset-inline-start:0;z-index:6;width:var(--lw);flex:none;background:var(--surface);border-inline-end:1px solid var(--line);padding:8px 10px;font-size:12px;color:var(--ink-3);display:flex;align-items:flex-end}
+.g-scale{position:relative;height:52px;flex:none}
+.g-month{position:absolute;top:6px;font-size:12.5px;font-weight:600;color:var(--ink-2);padding-inline-start:6px;border-inline-start:1px solid var(--line-2);height:46px;white-space:nowrap}
+.g-week{position:absolute;bottom:4px;font-size:10.5px;color:var(--ink-3);transform:translateX(50%)}
+.g-row{display:flex;min-height:34px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.g-row:hover .g-label{background:var(--surface-2)}
+.g-label{position:sticky;inset-inline-start:0;z-index:3;width:var(--lw);flex:none;background:var(--surface);border-inline-end:1px solid var(--line);padding:6px 10px;font-size:12.5px;display:flex;align-items:center;gap:6px;cursor:pointer;line-height:1.3}
+.g-label .x{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.g-label .id{font-size:10.5px;color:var(--ink-3)}
+.g-track{position:relative;flex:none}
+.g-track.wk{background-image:repeating-linear-gradient(to left,transparent 0,transparent calc(var(--wpx) - 1px),color-mix(in srgb,var(--line) 55%,transparent) calc(var(--wpx) - 1px),color-mix(in srgb,var(--line) 55%,transparent) var(--wpx))}
+.g-bar{position:absolute;top:8px;height:18px;border-radius:6px;background:var(--sb);border:1px solid var(--sc);cursor:pointer;overflow:hidden;min-width:6px}
+.g-bar i{position:absolute;inset-block:0;inset-inline-start:0;background:var(--sc);opacity:.85}
+.g-bar:hover{filter:brightness(.95);box-shadow:0 0 0 2px var(--sb)}
+.g-ph{display:flex;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.g-ph .g-label{background:var(--surface-2);font-weight:700;font-size:12.5px;cursor:default}
+.g-line{position:absolute;top:0;bottom:0;width:2px;z-index:4;pointer-events:none}
+.g-line.today{background:var(--prog)}
+.g-line.key{background:var(--accent);width:2px;opacity:.75}
+.g-line span{position:absolute;top:2px;transform:translateX(50%);font-size:10.5px;font-weight:700;color:#fff;padding:1px 6px;border-radius:5px;white-space:nowrap}
+.g-line.today span{background:var(--prog)} .g-line.key span{background:var(--accent);top:20px}
+.g-dia{position:absolute;top:9px;width:14px;height:14px;transform:translateX(50%) rotate(45deg);background:var(--ink);border-radius:2px;cursor:pointer}
+.g-dia.key{background:var(--accent)}
+.g-dia.past{background:var(--ink-3)}
+
+/* ---------- shop ---------- */
+.budget{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.budget .big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.bbar{height:10px;border-radius:99px;background:var(--sunk);overflow:hidden;display:flex;flex:1;min-width:160px}
+.bbar i{height:100%;display:block}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+@media (max-width:520px){ .items{grid-template-columns:1fr 1fr;gap:10px} }
+.item{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;cursor:pointer}
+.item .ph{aspect-ratio:4/3;background:var(--sunk);display:grid;place-items:center;font-size:40px;position:relative;overflow:hidden}
+.item .ph img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.item .ph .pill{position:absolute;top:8px;inset-inline-start:8px}
+.item .bd{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.item .nm{font-weight:600;font-size:14.5px;line-height:1.3}
+.item .rm{font-size:12px;color:var(--ink-3)}
+.item .pr{font-weight:700;font-variant-numeric:tabular-nums;font-size:15px}
+.item .ap{display:flex;align-items:center;gap:6px;margin-top:auto;padding-top:8px;flex-wrap:wrap}
+.vote{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:2px 8px 2px 4px;border-radius:99px;background:var(--sunk);color:var(--ink-2)}
+.vote.yes{background:var(--done-bg);color:var(--done)} .vote.no{background:var(--late-bg);color:var(--late)}
+.vote .av{width:20px;height:20px;font-size:10px;border:0}
+.vbtns{display:flex;gap:6px;margin-inline-start:auto}
+.vbtns button{width:34px;height:30px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);font-size:15px;padding:0}
+.vbtns button.on.y{background:var(--done);border-color:var(--done);color:#fff}
+.vbtns button.on.n{background:var(--late);border-color:var(--late);color:#fff}
+
+/* ---------- vendors ---------- */
+.vend{display:flex;flex-direction:column;gap:8px;cursor:pointer}
+.vend .top{display:flex;gap:8px;align-items:flex-start}
+.vend .top h3{flex:1}
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.quote{border:1px dashed var(--line-2);border-radius:8px;padding:6px 8px;font-size:12.5px;text-align:center;color:var(--ink-3)}
+.quote b{display:block;color:var(--ink);font-size:14px;font-variant-numeric:tabular-nums}
+.quote.has{border-style:solid;background:var(--surface-2)}
+.quote.low{border-color:var(--done)} .quote.low b{color:var(--done)}
+.quote.chosen{background:var(--done-bg);border-color:var(--done)}
+.contact-l{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- activity ---------- */
+.feed-day{font-size:12.5px;font-weight:600;color:var(--ink-3);margin:16px 4px 6px}
+.feed{display:flex;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);align-items:flex-start}
+.feed:last-child{border-bottom:0}
+.feed .tx{flex:1;font-size:14px}
+.feed .tm{font-size:12px;color:var(--ink-3);white-space:nowrap}
+
+/* ---------- drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(20,15,10,.38);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;z-index:51;background:var(--surface);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+@media (max-width:899px){ .drawer{inset-inline:0;bottom:0;max-height:94vh;height:94vh;border-radius:20px 20px 0 0;transform:translateY(105%)} .drawer.on{transform:none} .drawer::before{content:"";width:40px;height:5px;border-radius:9px;background:var(--line-2);position:absolute;top:7px;left:50%;margin-left:-20px} }
+@media (min-width:900px){ .drawer{top:0;bottom:0;inset-inline-end:0;width:540px;transform:translateX(-105%)} .drawer.on{transform:none} }
+.dr-h{display:flex;align-items:center;gap:8px;padding:18px 18px 10px;border-bottom:1px solid var(--line)}
+.dr-h .ttl{flex:1;font-size:13px;color:var(--ink-3);font-weight:500}
+.dr-b>*{flex-shrink:0}
+.dr-b{flex:1;overflow-y:auto;padding:16px 18px 28px;display:flex;flex-direction:column;gap:16px;overscroll-behavior:contain}
+.dr-f{display:flex;gap:8px;padding:12px 18px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);flex-wrap:wrap}
+.title-inp{field-sizing:content;min-height:1.5em;border:0;background:transparent;font-size:21px;font-weight:700;padding:4px 0;width:100%;font-family:var(--font);resize:none;line-height:1.35}
+.title-inp:focus{outline:none;box-shadow:inset 0 -2px 0 var(--accent)}
+.stgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stgrid button{height:38px;border-radius:9px;border:1px solid var(--line-2);background:var(--surface);font-size:13.5px;font-weight:500;color:var(--ink-2);display:flex;align-items:center;justify-content:center;gap:6px}
+.stgrid button.on{background:var(--sb);border-color:var(--sc);color:var(--sc);font-weight:700}
+.sec{border-top:1px solid var(--line);padding-top:14px}
+.sec>h3{font-size:13px;color:var(--ink-3);font-weight:600;margin-bottom:10px}
+details.sec>summary{font-size:13px;color:var(--ink-3);font-weight:600;cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px}
+details.sec>summary::before{content:"‹";transition:transform .2s;display:inline-block}
+details.sec[open]>summary::before{transform:rotate(-90deg)}
+details.sec>summary+*{margin-top:12px}
+.active-dates{display:flex;gap:8px;align-items:center;padding:10px 12px;background:var(--sunk);border-radius:10px;font-size:14px;flex-wrap:wrap}
+.active-dates b{font-variant-numeric:tabular-nums}
+.deps{display:flex;flex-direction:column;gap:6px}
+.dep{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:9px;background:var(--surface-2);border:1px solid var(--line);font-size:13.5px;cursor:pointer}
+.dep .x{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmts{display:flex;flex-direction:column;gap:10px}
+.cmt{display:flex;gap:8px}
+.cmt .bb{flex:1;background:var(--sunk);border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:14px;white-space:pre-wrap;word-break:break-word}
+.cmt .bb .w{font-size:12px;color:var(--ink-3);margin-bottom:2px}
+.cmt-in{display:flex;gap:8px;align-items:flex-end}
+.cmt-in textarea{min-height:42px;height:42px}
+.saved{font-size:12px;color:var(--done);opacity:0;transition:opacity .3s}
+.saved.on{opacity:1}
+
+/* popover / toast / modal */
+.pop{position:fixed;z-index:60;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:6px;min-width:170px;display:none}
+.pop.on{display:block}
+.pop button{display:flex;width:100%;align-items:center;gap:8px;padding:9px 10px;border:0;background:none;border-radius:8px;font-size:14px;text-align:start}
+.pop button:hover{background:var(--sunk)}
+.pop button i{width:9px;height:9px;border-radius:50%;background:var(--sc)}
+.toast{position:fixed;z-index:70;left:50%;transform:translate(-50%,20px);bottom:calc(var(--tab-h) + 20px + env(safe-area-inset-bottom));background:var(--ink);color:var(--bg);padding:10px 12px 10px 16px;border-radius:12px;display:flex;align-items:center;gap:14px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;box-shadow:var(--shadow-lg);max-width:92vw}
+.toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast button{background:none;border:0;color:var(--accent-2);font-weight:700;padding:4px 6px}
+@media (prefers-color-scheme: dark){ .toast button{color:var(--accent)} }
+@media (min-width:900px){ .toast{bottom:28px} }
+.modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(20,15,10,.45)}
+.modal.on{display:flex}
+.modal .box{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-lg);width:min(560px,100%);max-height:90vh;overflow:auto;padding:22px}
+.modal h2{font-size:20px;margin-bottom:8px;font-family:var(--serif)}
+.who{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+.who button{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:14px;border:1px solid var(--line-2);background:var(--surface-2);font-weight:600}
+.who button:hover{border-color:var(--accent);background:var(--accent-soft)}
+.who .av{width:46px;height:46px;font-size:18px}
+pre.sum{white-space:pre-wrap;background:var(--sunk);border-radius:12px;padding:14px;font-family:var(--font);font-size:14px;line-height:1.6;max-height:50vh;overflow:auto;margin:12px 0}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}
+.login .box{max-width:400px}
+.login h1{font-size:34px;margin:16px 0 8px}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);text-decoration:none;color:inherit;box-shadow:var(--shadow);font-weight:600}
+.more a svg.i{width:26px;height:26px;color:var(--accent)}
+.more a span{font-size:12.5px;color:var(--ink-3);font-weight:400}
+.set-row{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.set-row:last-child{border-bottom:0}
+.set-row .l{flex:1;min-width:200px}
+.set-row .l b{display:block;font-size:14.5px}
+.set-row .l span{font-size:13px;color:var(--ink-2)}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+@media print{ .topbar,.tabbar,.sidenav,.fab{display:none!important} main{padding:0} .card{box-shadow:none} }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="scrim" id="scrim" data-a="closeDrawer"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle"></aside>
+<div class="pop" id="pop" role="menu"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true"><div class="box" id="modalBox"></div></div>
+
+<script>
+/* =====================================================================
+   הגדרות חיבור לענן (לשיתוף בין כל המשתמשים)
+   ---------------------------------------------------------------------
+   כל עוד FIREBASE_CONFIG = null, האפליקציה עובדת במצב מקומי:
+   הנתונים נשמרים רק בדפדפן שבו פתחתם אותה.
+   להפעלת שיתוף: הדביקו כאן את אובייקט ה-config מ-Firebase (ראו README.md).
+   ===================================================================== */
+const FIREBASE_CONFIG = null;
+/* לדוגמה:
+const FIREBASE_CONFIG = {
+  apiKey: "AIza...",
+  authDomain: "beit-alon.firebaseapp.com",
+  projectId: "beit-alon",
+  storageBucket: "beit-alon.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef"
+};
+*/
+const PROJECT_ID = 'alon';
+const FB_VER = '10.12.2';
+</script>
+
+<script>
+'use strict';
+/* ============================ seed (מתוך האקסל) ============================ */
+const SEED = {"tasks":[{"id":"T-001","phase":"0 איסוף מידע","task":"החלטת תקציב כולל + רזרבה","owner":"אריאל+רינת","prio":"גבוהה","status":"לא התחיל","deps":"","mode":"F","sA":"2026-10-15","dA":"2026-10-22","sB":"2026-10-15","dB":"2026-10-22","desc":"לקבוע תקרת תקציב, רזרבה (המלצה 10–15%, הנחה) וסדר עדיפויות; החלטה #1","docs":"מקורות מימון, משכנתא/הלוואה, תקציב גינה 20–50 אלף (לא אומת)","notes":"Decision Log #1","pm":null},{"id":"T-002","phase":"0 איסוף מידע","task":"הוחלט: גרים בבית בזמן העבודות (תרחיש A)","owner":"אריאל+רינת","prio":"גבוהה","status":"הושלם","deps":"","mode":"F","sA":"2026-10-11","dA":"2026-10-11","sB":"2026-10-11","dB":"2026-10-11","desc":"החלטה #2 התקבלה 11.10: אם המפתח בתחילת דצמבר — נכנסים מיד ומשפצים בשלבים תוך מגורים","docs":"","notes":"הושלם; תרחיש B = מגורי ביניים","pm":null},{"id":"T-003","phase":"0 איסוף מידע","task":"איסוף תוכניות קבלן/קונסטרוקציה + שרטוטי חצר","owner":"אריאל","prio":"גבוהה","status":"בתהליך","deps":"","mode":"F","sA":"2026-10-15","dA":"2026-10-25","sB":"2026-10-15","dB":"2026-10-25","desc":"להעלות לתיקיית source את תוכניות הקבלן, השרטוטים הצבעוניים והיתר קיים","docs":"תוכניות, היתר בנייה קיים, חוזה רכישה","notes":"חסר כרגע בתיקייה | 11.10: התקבלו מ-Drive תוכניות קבלן (דגם תמר), שינויי דיירים TAMAR 2024 ותכנית מגרש 823-3. עדיין חסרים: היתר + טבלת שטחים, חוזה, תצ\"ר, שרטוטי חצר","pm":null},{"id":"T-004","phase":"0 איסוף מידע","task":"תיאום מועד מסירת מפתח","owner":"אריאל","prio":"גבוהה","status":"לא התחיל","deps":"","mode":"F","sA":"2026-10-18","dA":"2026-10-30","sB":"2026-10-18","dB":"2026-10-30","desc":"לברר מול המוכר/יזם מועד מסירה מדויק (טווח 1.12–5.1) ותנאי גישה לפני מסירה (מדידות/הצעות מחיר)","docs":"חוזה רכישה, איש קשר מוכר","notes":"מועד המפתח = עוגן לכל התוכנית | 11.10: במסמכי Drive אין תאריך מסירה (מפרט המכר הוא נוסח לדוגמה למגרש 822, לא חתום) | 11.10(2): הקובץ המצורף החדש = כפילות של תכנית אינסטלציה; עדיין אין תאריך מסירה במסמכים","pm":null},{"id":"T-005","phase":"0 איסוף מידע","task":"מדידות משלימות","owner":"אריאל/רינת","prio":"בינונית","status":"לא התחיל","deps":"T-004","mode":"F","sA":"2026-10-23","dA":"2026-11-15","sB":"2026-10-23","dB":"2026-11-15","desc":"אורך פינת אוכל, חדר אורחים, מזווה, חדרי ילדים, מקום מקרר ראשי, חדרים למזגנים","docs":"מטר לייזר, תוכניות; לציין מקור לכל מידה","notes":"תלוי בגישה לבית לפני מסירה","pm":null},{"id":"T-010","phase":"1 היתכנות","task":"בחירת אנשי מקצוע: אדריכל רישוי / מהנדס / מודד","owner":"אריאל","prio":"גבוהה","status":"לא התחיל","deps":"T-001","mode":"F","sA":"2026-10-23","dA":"2026-11-08","sB":"2026-10-23","dB":"2026-11-08","desc":"3 הצעות לכל אחד; החלטה #3","docs":"תיאור היקף, תוכניות, תב\"ע 7001686","notes":"לא לפנות לספק ללא אישור אריאל","pm":null},{"id":"T-011","phase":"1 היתכנות","task":"מודד: מפת מדידה + גבולות 823/3","owner":"מודד","prio":"גבוהה","status":"לא התחיל","deps":"T-010","mode":"F","sA":"2026-11-08","dA":"2026-11-30","sB":"2026-11-08","dB":"2026-11-30","desc":"מפת מדידה עדכנית 1:250 (נדרשת להיתר לפי ה'2); החלטה #4","docs":"נסח/תצ\"ר, תכנית חלוקה 823/1-3","notes":"פותר את סתירת 528 מ\"ר / 0.5 דונם","pm":null},{"id":"T-012","phase":"1 היתכנות","task":"בירור בוועדה (מטה בנימין): זכויות 823/3, קליניקה, מחסן, מרפסת","owner":"אדריכל/אריאל","prio":"גבוהה","status":"לא התחיל","deps":"T-010","mode":"F","sA":"2026-11-01","dA":"2026-11-30","sB":"2026-11-01","dB":"2026-11-30","desc":"שאלות: חלוקת 6 יח\"ד, קו בניין 3 מ', קליניקה (תב\"ע: מגורים בלבד), סגירת פרגולה אסורה (4.6ז), גדר עד 1.5 מ'; החלטה #5","docs":"zoning_taba_7001686.md, היתר קיים, תכנית בינוי; היתר 823/3 + טבלת שטחים (דגם \"200 מ\"ר\" מול 190 עיקרי)","notes":"ממצאי התב\"ע — קריאה חזותית, לאמת | 11.10(2): הורביץ בצפון → גבול צד, קו בניין 3 מ'. ראו permit_classification.md","pm":null},{"id":"T-013","phase":"1 היתכנות","task":"מהנדס: אילו חלונות בסלון אפשר להרחיב","owner":"מהנדס","prio":"גבוהה","status":"לא התחיל","deps":"T-003,T-010","mode":"F","sA":"2026-11-08","dA":"2026-11-30","sB":"2026-11-08","dB":"2026-11-30","desc":"בדיקת קירות/עמודים/קורות מול תוכניות; החלטה #6","docs":"תוכניות קונסטרוקציה; מידות 405/424 ס\"מ","notes":"חובה לפני הזמנת אלומיניום | 11.10: יש תוכניות קונסטרוקציה של הדגם (חננאל כפיר, 16/04/2023) בתיקייה source/drive/kablan","pm":null},{"id":"T-014","phase":"1 היתכנות","task":"סקר תשתיות (חשמל/אינסטלציה/ניקוז)","owner":"קבלן/חשמלאי","prio":"בינונית","status":"לא התחיל","deps":"T-004","mode":"F","sA":"2026-11-15","dA":"2026-12-15","sB":"2026-11-15","dB":"2026-12-15","desc":"חשמלאי+אינסטלטור: מצב לוח, הספק, ביוב, ניקוז מרפסת","docs":"גישה לבית","notes":"יכול לגלוש אחרי מפתח","pm":null},{"id":"T-020","phase":"2 תכנון","task":"החלטה: היקף סגירת מרפסת הורים","owner":"אריאל+רינת","prio":"גבוהה","status":"לא התחיל","deps":"T-012","mode":"F","sA":"2026-11-20","dA":"2026-12-10","sB":"2026-11-20","dB":"2026-12-10","desc":"830×259; שימוש: חדר ארונות/מיני-סלון/עבודה; החלטה #7","docs":"תשובת ועדה, מהנדס","notes":"ייתכן שאסור/דורש היתר","pm":null},{"id":"T-021","phase":"2 תכנון","task":"קליניקה + מחסן: החלטה על חלופה","owner":"אריאל+אדריכל","prio":"גבוהה","status":"לא התחיל","deps":"T-011,T-012","mode":"F","sA":"2026-11-25","dA":"2026-12-20","sB":"2026-11-25","dB":"2026-12-20","desc":"לאור התב\"ע (מגורים בלבד, מחסן אינטגרלי ≤15 מ\"ר, קו 3 מ'); החלטה #8","docs":"מפת מדידה, תשובת ועדה","notes":"סיכון אדום | 11.10(2): הגבול הצפוני (הורביץ) = קו בניין 3 מ'; סיווג היתר: נדרש/כנראה לא ניתן לאשר","pm":null},{"id":"T-022","phase":"2 תכנון","task":"היקף מטבח + מזווה","owner":"אריאל+רינת","prio":"גבוהה","status":"לא התחיל","deps":"T-001","mode":"F","sA":"2026-11-01","dA":"2026-11-22","sB":"2026-11-01","dB":"2026-11-22","desc":"מלא/אי/מכשירים; מקרר נוסף במזווה; החלטה #9","docs":"מידות 319/470, רשימת מכשירים","notes":"נדרש לפני נקודות חשמל-מים","pm":null},{"id":"T-023","phase":"2 תכנון","task":"קונספט חוץ","owner":"אריאל+רינת","prio":"נמוכה","status":"לא התחיל","deps":"T-011,T-012","mode":"F","sA":"2026-12-01","dA":"2027-01-15","sB":"2026-12-01","dB":"2027-01-15","desc":"מטבח חוץ, הצללה (פרגולה לא נסגרת), גידור (זכוכית? לבדוק), גינה; החלטה #10","docs":"תקציב גינה 20–50 אלף (לא אומת)","notes":"יכול לרוץ אחרי כניסה","pm":null},{"id":"T-024","phase":"2 תכנון","task":"כתב כמויות + תקציב לפי שלבים","owner":"אדריכל/קבלן","prio":"בינונית","status":"לא התחיל","deps":"T-013,T-020,T-022","mode":"F","sA":"2026-11-22","dA":"2026-12-10","sB":"2026-11-22","dB":"2026-12-10","desc":"להכין כתב כמויות לקבלת הצעות","docs":"כל ההחלטות לעיל","notes":"בסיס להשוואת הצעות","pm":null},{"id":"T-030","phase":"3 התקשרויות","task":"3 הצעות מחיר מקבלנים","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-024","mode":"F","sA":"2026-11-25","dA":"2026-12-20","sB":"2026-11-25","dB":"2026-12-20","desc":"להשוות לפי כתב כמויות (חומר/עבודה/מע\"מ)","docs":"כתב כמויות, לו\"ז","notes":"אין התחייבות ללא אישור","pm":null},{"id":"T-031","phase":"3 התקשרויות","task":"בחירת קבלן + חוזה","owner":"אריאל+רינת","prio":"גבוהה","status":"לא התחיל","deps":"T-030","mode":"K","sA":"2026-11-24","dA":"2026-12-11","sB":"2026-12-29","dB":"2027-01-15","desc":"לו\"ז, אבני דרך לתשלום, עיכבון, אחריות","docs":"הצעות, ביטוח קבלן","notes":"מומלץ ייעוץ משפטי (המלצה)","pm":null},{"id":"T-032","phase":"3 התקשרויות","task":"הגשת בקשת היתר (אם נדרש)","owner":"אדריכל רישוי","prio":"בינונית","status":"לא התחיל","deps":"T-012,T-020","mode":"F","sA":"2026-12-10","dA":"2027-01-31","sB":"2026-12-10","dB":"2027-01-31","desc":"מרפסת/חלונות/מחסן לפי תשובת ועדה","docs":"מפת מדידה, תכנית פיתוח, חישובים סטטיים","notes":"משך אישור — לא ידוע; עבודות פנים ללא היתר יכולות להתחיל","pm":null},{"id":"T-033","phase":"3 התקשרויות","task":"הזמנת פריטים ארוכי-אספקה","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-013,T-022,T-031","mode":"K","sA":"2026-12-01","dA":"2026-12-22","sB":"2027-01-05","dB":"2027-01-26","desc":"אלומיניום/חלונות, מטבח, מזגנים — רק אחרי אישורים","docs":"מידות מאושרות","notes":"זמני אספקה לא ידועים — לברר","pm":null},{"id":"T-040","phase":"5 מערכות","task":"מיזוג: תכנון וחישוב BTU","owner":"יועץ/מתקין מיזוג","prio":"בינונית","status":"לא התחיל","deps":"T-005","mode":"F","sA":"2026-11-06","dA":"2026-11-20","sB":"2026-11-06","dB":"2026-11-20","desc":"רשימת חדרים + שטח/נפח, חשיפה לשמש, מערכת מיני-מרכזית מול מפוצלים","docs":"מידות חדרים, תוכניות, כיווני חלונות","notes":"לא נקבע עדיין סוג מערכת","pm":null},{"id":"T-041","phase":"5 מערכות","task":"מיזוג: מיקום מעבים ונקודות חשמל","owner":"מתקין מיזוג+חשמלאי","prio":"בינונית","status":"לא התחיל","deps":"T-040","mode":"F","sA":"2026-11-15","dA":"2026-11-30","sB":"2026-11-15","dB":"2026-11-30","desc":"מיקום יחידות חוץ (רעש לשכנים, קו בניין), נקודת חשמל ייעודית, ניקוז","docs":"תוכנית חזיתות, לוח חשמל","notes":"לתאם עם מרפסת/קליניקה","pm":null},{"id":"T-042","phase":"5 מערכות","task":"מיזוג: 3 הצעות מחיר והזמנה","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-041","mode":"F","sA":"2026-11-20","dA":"2026-12-15","sB":"2026-11-20","dB":"2026-12-15","desc":"השוואה: יחידות, צנרת, התקנה, אחריות, מע\"מ","docs":"מפרט מ-T-040/41","notes":"הזמנה רק באישור מפורש","pm":null},{"id":"T-043","phase":"5 מערכות","task":"מיזוג: התקנת הכנות (צנרת) בזמן עבודות","owner":"מתקין מיזוג","prio":"בינונית","status":"לא התחיל","deps":"T-042,T-031","mode":"K","sA":"2026-12-15","dA":"2027-01-05","sB":"2027-01-19","dB":"2027-02-09","desc":"צנרת גז/ניקוז/חשמל לפני טיח/תקרה","docs":"תוכנית תיאום מערכות","notes":"חייב לפני גמר","pm":null},{"id":"T-044","phase":"5 מערכות","task":"מיזוג: התקנת יחידות והפעלה","owner":"מתקין מיזוג","prio":"בינונית","status":"לא התחיל","deps":"T-043","mode":"K","sA":"2027-01-26","dA":"2027-02-09","sB":"2027-03-02","dB":"2027-03-16","desc":"אחרי צבע/ניקיון גס","docs":"","notes":"הנחה: גמר ~8 שבועות אחרי מפתח","pm":null},{"id":"T-050","phase":"4 שלד ופתחים","task":"בדיקת מסירה ופרוטוקול","owner":"אריאל+רינת","prio":"גבוהה","status":"לא התחיל","deps":"T-004","mode":"K","sA":"2026-12-01","dA":"2026-12-02","sB":"2027-01-05","dB":"2027-01-06","desc":"בדק בית/מעבר על ליקויים, קריאת מונים, צילום מצב","docs":"צ'קליסט, מצלמה","notes":"יום המפתח | 11.10(2): השיפוץ אחרי מסירה (אושר ע\"י אריאל) — פרוטוקול מסירה מפורט חיוני לשמירת האחריות","pm":null},{"id":"T-051","phase":"4 שלד ופתחים","task":"הרחבת חלונות / פתחים","owner":"קבלן","prio":"בינונית","status":"לא התחיל","deps":"T-013,T-031,T-033","mode":"K","sA":"2026-12-15","dA":"2027-01-05","sB":"2027-01-19","dB":"2027-02-09","desc":"רק לפי אישור מהנדס","docs":"היתר אם נדרש","notes":"לוח זמן — הנחה","pm":null},{"id":"T-052","phase":"5 מערכות","task":"חשמל ואינסטלציה (כולל מטבח)","owner":"קבלן","prio":"בינונית","status":"לא התחיל","deps":"T-022,T-031","mode":"K","sA":"2026-12-11","dA":"2027-01-05","sB":"2027-01-15","dB":"2027-02-09","desc":"לפי תכנון מטבח וגופי תאורה","docs":"תוכנית נקודות","notes":"הנחה","pm":null},{"id":"T-053","phase":"6 גמר פנים","task":"ריצוף/טיח/צבע/תאורה","owner":"קבלן","prio":"בינונית","status":"לא התחיל","deps":"T-052","mode":"K","sA":"2027-01-05","dA":"2027-02-02","sB":"2027-02-09","dB":"2027-03-09","desc":"","docs":"בחירת חומרים","notes":"הנחה","pm":null},{"id":"T-054","phase":"9 מסירה","task":"מסירה מקבלן ובדק","owner":"אריאל+קבלן","prio":"בינונית","status":"לא התחיל","deps":"T-053","mode":"K","sA":"2027-02-02","dA":"2027-02-09","sB":"2027-03-09","dB":"2027-03-16","desc":"רשימת תיקונים","docs":"","notes":"הנחה","pm":null},{"id":"T-055","phase":"6 גמר פנים","task":"מטבח: בחירת ספק והזמנה","owner":"אריאל+רינת","prio":"בינונית","status":"לא התחיל","deps":"T-022","mode":"F","sA":"2026-11-15","dA":"2026-12-20","sB":"2026-11-15","dB":"2026-12-20","desc":"3 הצעות; זמן אספקה טיפוסי 6–10 שבועות (הערכה, לאמת)","docs":"מידות 319/470, מכשירים (למידות נגר)","notes":"הזמנה מוקדמת ככל האפשר; מדידה סופית אחרי שלד","pm":null},{"id":"T-056","phase":"6 גמר פנים","task":"ארונות קיר/חדר אורחים/ארונות במרפסת","owner":"אריאל+רינת","prio":"נמוכה","status":"לא התחיל","deps":"T-020","mode":"F","sA":"2026-12-01","dA":"2027-01-10","sB":"2026-12-01","dB":"2027-01-10","desc":"תכנון והצעות","docs":"מידות חדרים","notes":"תלוי בסגירת מרפסת","pm":null},{"id":"T-057","phase":"6 גמר פנים","task":"מדידה סופית בשטח לנגרות","owner":"נגר/ספק מטבח","prio":"בינונית","status":"לא התחיל","deps":"T-051,T-052","mode":"K","sA":"2027-01-05","dA":"2027-01-12","sB":"2027-02-09","dB":"2027-02-16","desc":"אחרי טיח/ריצוף","docs":"","notes":"שינוי מידות = שינוי הזמנה","pm":null},{"id":"T-058","phase":"6 גמר פנים","task":"התקנת מטבח וארונות","owner":"ספק מטבח/נגר","prio":"בינונית","status":"לא התחיל","deps":"T-057","mode":"K","sA":"2027-01-26","dA":"2027-02-16","sB":"2027-03-02","dB":"2027-03-23","desc":"","docs":"","notes":"תלוי בזמן אספקה","pm":null},{"id":"T-060","phase":"הכנה למעבר","task":"בעל הדירה: תאריך פינוי מדויק + הודעה","owner":"אריאל","prio":"גבוהה","status":"לא התחיל","deps":"","mode":"F","sA":"2026-10-13","dA":"2026-10-20","sB":"2026-10-13","dB":"2026-10-20","desc":"לאמת בחוזה תאריך סיום שכירות ותקופת הודעה; לשאול על אפשרות הארכה חודשית (חלופה B)","docs":"חוזה שכירות","notes":"נתיב קריטי: תאריך פינוי","pm":null},{"id":"T-061","phase":"הכנה למעבר","task":"3 הצעות ממובילים (כולל אחסון / מעבר כפול)","owner":"רינת","prio":"בינונית","status":"לא התחיל","deps":"T-060","mode":"F","sA":"2026-10-15","dA":"2026-11-05","sB":"2026-10-15","dB":"2026-11-05","desc":"לבקש מחיר לשני מסלולים: ישיר לבית (A) / דירה→אחסון→בית (B)","docs":"רשימת תכולה, קומה/מעלית","notes":"הזמנה באישור","pm":null},{"id":"T-062","phase":"הכנה למעבר","task":"מיון ואריזה","owner":"כל המשפחה","prio":"בינונית","status":"לא התחיל","deps":"T-061","mode":"F","sA":"2026-11-01","dA":"2026-11-29","sB":"2026-11-01","dB":"2026-11-29","desc":"אריזה לפי חדר; ארגזי 'יום ראשון' נפרדים","docs":"","notes":"לפי תאריך הפינוי, לא לפי המפתח","pm":null},{"id":"T-063","phase":"הכנה למעבר","task":"העברת חשמל","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-050","mode":"K","sA":"2026-12-01","dA":"2026-12-04","sB":"2027-01-05","dB":"2027-01-08","desc":"קריאת מונה ביום מפתח, העברת חשבון","docs":"מספר חוזה/מונה, ת\"ז","notes":"","pm":null},{"id":"T-064","phase":"הכנה למעבר","task":"העברת מים + ארנונה (מועצה)","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-050","mode":"K","sA":"2026-12-01","dA":"2026-12-08","sB":"2027-01-05","dB":"2027-01-12","desc":"עדכון מחזיק נכס במועצה (מטה בנימין) ובדירה הישנה","docs":"חוזה רכישה, פרוטוקול מסירה","notes":"לאמת ספק מים ביישוב","pm":null},{"id":"T-065","phase":"הכנה למעבר","task":"גז","owner":"רינת","prio":"בינונית","status":"לא התחיל","deps":"T-050","mode":"K","sA":"2026-12-01","dA":"2026-12-15","sB":"2027-01-05","dB":"2027-01-19","desc":"ניתוק בדירה הישנה, חיבור/בדיקה בבית","docs":"ספק גז","notes":"תלוי במטבח","pm":null},{"id":"T-066","phase":"הכנה למעבר","task":"אינטרנט/תקשורת","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-004","mode":"K","sA":"2026-11-10","dA":"2026-12-08","sB":"2026-12-15","dB":"2027-01-12","desc":"בדיקת תשתית סיבים ביישוב, תיאום התקנה מראש","docs":"כתובת","notes":"להזמין מוקדם","pm":null},{"id":"T-067","phase":"הכנה למעבר","task":"שינוי כתובת ודואר","owner":"רינת","prio":"בינונית","status":"לא התחיל","deps":"T-060","mode":"K","sA":"2026-11-24","dA":"2026-12-15","sB":"2026-12-29","dB":"2027-01-19","desc":"משרד הפנים, בנקים, ביטוחים, קופ\"ח, בתי ספר, הפניית דואר","docs":"ת\"ז","notes":"מועד = יום מעבר בפועל","pm":null},{"id":"T-068","phase":"הכנה למעבר","task":"ביטוח דירה/מבנה לבית החדש","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-004","mode":"K","sA":"2026-11-17","dA":"2026-12-01","sB":"2026-12-22","dB":"2027-01-05","desc":"פוליסה בתוקף מיום המפתח","docs":"פרטי נכס","notes":"","pm":null},{"id":"T-069","phase":"הכנה למעבר","task":"יום ההובלה","owner":"מובילים","prio":"גבוהה","status":"לא התחיל","deps":"T-062","mode":"F","sA":"2026-11-30","dA":"2026-12-01","sB":"2026-11-30","dB":"2026-12-01","desc":"A: ישירות לבית מיד אחרי מפתח. B: לאחסון/מגורי ביניים, ושוב לבית אחרי מפתח","docs":"","notes":"תאריך פינוי — לא אומת","pm":null},{"id":"T-070","phase":"7 חוץ ופיתוח","task":"תשתיות חוץ (ניקוז, חשמל, השקיה) לפני ריצוף","owner":"קבלן","prio":"בינונית","status":"לא התחיל","deps":"T-023","mode":"K","sA":"2027-01-05","dA":"2027-01-30","sB":"2027-02-09","dB":"2027-03-06","desc":"","docs":"תכנית פיתוח","notes":"לאחר החלטה #10","pm":null},{"id":"T-071","phase":"7 חוץ ופיתוח","task":"ריצוף, גינה, גידור, תאורה, מטבח חוץ","owner":"קבלן/גנן","prio":"נמוכה","status":"לא התחיל","deps":"T-070","mode":"K","sA":"2027-01-30","dA":"2027-03-31","sB":"2027-03-06","dB":"2027-05-05","desc":"","docs":"","notes":"יכול לרוץ אחרי כניסה","pm":null},{"id":"T-080","phase":"8 ריהוט","task":"שולחן ל-20, שזלונג, ספה נפתחת, כיסאות בר","owner":"אריאל+רינת","prio":"נמוכה","status":"לא התחיל","deps":"T-051,T-058","mode":"K","sA":"2027-01-26","dA":"2027-03-11","sB":"2027-03-02","dB":"2027-04-15","desc":"רק אחרי מידות סופיות/חלונות","docs":"procurement_list.md","notes":"לא לרכוש לפני מידות","pm":null},{"id":"T-081","phase":"8 ריהוט","task":"מקררים ומכשירי חשמל","owner":"אריאל+רינת","prio":"בינונית","status":"לא התחיל","deps":"T-022","mode":"F","sA":"2026-11-22","dA":"2026-12-20","sB":"2026-11-22","dB":"2026-12-20","desc":"מידות לפני הזמנת מטבח","docs":"","notes":"הזמנה באישור","pm":null},{"id":"T-090","phase":"ניהול","task":"סטטוס שבועי + עדכון מאגרים","owner":"תמר (בוט)","prio":"בינונית","status":"לא התחיל","deps":"","mode":"F","sA":"2026-10-15","dA":"2027-03-31","sB":"2026-10-15","dB":"2027-03-31","desc":"Decision Log, Open Questions, Risk, Budget","docs":"","notes":"כל שבוע","pm":null},{"id":"T-100","phase":"הכנה למעבר","task":"מסירת הדירה השכורה + החזר פיקדון/ערבות","owner":"אריאל","prio":"גבוהה","status":"לא התחיל","deps":"T-060","mode":"F","sA":"2026-11-17","dA":"2026-12-31","sB":"2026-11-17","dB":"2026-12-31","desc":"צילום מצב, תיקונים, ניקיון, קריאת מונים, ניתוק/העברת חשבונות, החזר פיקדון/ערבות/צ'קים","docs":"חוזה שכירות, פרוטוקול כניסה, ערבות","notes":"לבדוק תנאי החזר בחוזה","pm":null},{"id":"T-101","phase":"הכנה למעבר","task":"שער החלטה: תרחיש A או B","owner":"אריאל+רינת","prio":"גבוהה","status":"לא התחיל","deps":"T-004,T-060","mode":"F","sA":"2026-11-01","dA":"2026-11-10","sB":"2026-11-01","dB":"2026-11-10","desc":"לפי מועד המפתח המאושר מול תאריך הפינוי","docs":"אישור בכתב על מועד מסירה","notes":"מועד אחרון להחלטה (הנחה): ~3 שבועות לפני פינוי","pm":null},{"id":"T-110","phase":"A: מגורים בזמן שיפוץ","task":"הגדרת מינימום למגורים לפני כניסה","owner":"אריאל+רינת+קבלן","prio":"גבוהה","status":"לא התחיל","deps":"T-002,T-050","mode":"F","sA":"2026-11-10","dA":"2026-11-25","sB":"2026-11-10","dB":"2026-11-25","desc":"חדר רחצה תקין אחד, מטבח זמני, חדרי שינה, בטיחות (חשמל, מעקות, גלאי עשן), הפרדת אבק, מקום לתכולה","docs":"תוכנית שלבים מהקבלן","notes":"תנאי כניסה","pm":null},{"id":"T-111","phase":"A: מגורים בזמן שיפוץ","task":"מטבח זמני","owner":"רינת","prio":"בינונית","status":"לא התחיל","deps":"T-110","mode":"F","sA":"2026-11-20","dA":"2026-11-30","sB":"2026-11-20","dB":"2026-11-30","desc":"מקרר, משטח, כיור/מים, כיריים חשמליות","docs":"","notes":"עד התקנת המטבח","pm":null},{"id":"T-112","phase":"A: מגורים בזמן שיפוץ","task":"אחסון תכולה: מכולה/מחסן","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-110","mode":"F","sA":"2026-11-15","dA":"2026-11-28","sB":"2026-11-15","dB":"2026-11-28","desc":"מכולה בחצר או מחסן חיצוני; כיסוי ביטוחי","docs":"מקום פנוי בחצר","notes":"הצעות באישור","pm":null},{"id":"T-113","phase":"A: מגורים בזמן שיפוץ","task":"שלביות חדר-אחר-חדר","owner":"קבלן+אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-031","mode":"K","sA":"2026-11-24","dA":"2026-12-08","sB":"2026-12-29","dB":"2027-01-12","desc":"חלוקה לאזורי עבודה: קודם חלונות/מערכות, אזור מגורים סגור באבק; לסכם בחוזה","docs":"כתב כמויות","notes":"להכניס לחוזה","pm":null},{"id":"T-114","phase":"A: מגורים בזמן שיפוץ","task":"שעות עבודה ורעש + שכנים","owner":"קבלן+אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-113","mode":"K","sA":"2026-12-01","dA":"2026-12-08","sB":"2027-01-05","dB":"2027-01-12","desc":"שעות עבודה, ימים שקטים, עדכון שכנים (הורביץ)","docs":"","notes":"תקנות רעש — לאמת","pm":null},{"id":"T-115","phase":"A: מגורים בזמן שיפוץ","task":"תשתיות ביום 1","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-063,T-064,T-065,T-066","mode":"K","sA":"2026-11-17","dA":"2026-12-01","sB":"2026-12-22","dB":"2027-01-05","desc":"חשמל, מים, גז, אינטרנט פעילים ביום הכניסה (T-063–T-066)","docs":"","notes":"לתאם מראש","pm":null},{"id":"T-116","phase":"A: מגורים בזמן שיפוץ","task":"מיזוג/חימום בעדיפות לחורף","owner":"מתקין מיזוג","prio":"בינונית","status":"לא התחיל","deps":"T-042","mode":"K","sA":"2026-12-01","dA":"2026-12-15","sB":"2027-01-05","dB":"2027-01-19","desc":"להתקין קודם בחדרי שינה/סלון; חלופה: מפזרי חום זמניים","docs":"T-040/41","notes":"משנה את T-043/44","pm":null},{"id":"T-120","phase":"B: מגורי ביניים","task":"איתור מגורי ביניים ~חודש","owner":"אריאל+רינת","prio":"בינונית","status":"לא התחיל","deps":"T-060","mode":"F","sA":"2026-10-13","dA":"2026-11-10","sB":"2026-10-13","dB":"2026-11-10","desc":"אפשרויות: משפחה, השכרה לטווח קצר, הארכה עם בעל הדירה","docs":"תאריך פינוי, תאריך מפתח צפוי","notes":"חלופה אם המפתח בינואר","pm":null},{"id":"T-121","phase":"B: מגורי ביניים","task":"אחסון רהיטים ותכולה","owner":"רינת","prio":"בינונית","status":"לא התחיל","deps":"T-120","mode":"F","sA":"2026-10-25","dA":"2026-11-15","sB":"2026-10-25","dB":"2026-11-15","desc":"מחסן להשכרה/מכולה לחודש-חודשיים","docs":"נפח תכולה מהמובילים","notes":"הצעות באישור","pm":null},{"id":"T-122","phase":"B: מגורי ביניים","task":"עלויות מעבר כפול לתקציב","owner":"אריאל","prio":"בינונית","status":"לא התחיל","deps":"T-061,T-121","mode":"F","sA":"2026-11-01","dA":"2026-11-10","sB":"2026-11-01","dB":"2026-11-10","desc":"הובלה×2, אחסון, שכירות ביניים — להוסיף ל-Budget Tracker","docs":"הצעות","notes":"לא ידוע — עד הצעות","pm":null},{"id":"T-123","phase":"B: מגורי ביניים","task":"מעבר מביניים לבית","owner":"מובילים","prio":"בינונית","status":"לא התחיל","deps":"T-121","mode":"K","sA":"2026-12-04","dA":"2026-12-11","sB":"2027-01-08","dB":"2027-01-15","desc":"אחרי מפתח; תשתיות יום 1 כמו T-115","docs":"","notes":"רק בתרחיש B","pm":null}],"milestones":[{"id":"M1","name":"תקציב + יעד זמן הוחלטו","early":"2026-10-22","late":"2026-10-22","cond":"T-001,T-002","notes":"","ord":0},{"id":"M2","name":"אנשי מקצוע נבחרו","early":"2026-11-08","late":"2026-11-08","cond":"T-010","notes":"","ord":1},{"id":"M3","name":"תאריך פינוי מאומת + בירור הארכה","early":"2026-10-20","late":"2026-10-20","cond":"T-060","notes":"","ord":2},{"id":"M3b","name":"שער החלטה A/B","early":"2026-11-10","late":"2026-11-10","cond":"T-101","notes":"","ord":3},{"id":"M3c","name":"פינוי הדירה השכורה (לא אומת)","early":"2026-12-01","late":"2026-12-01","cond":"T-069,T-100","notes":"","ord":4},{"id":"M4","name":"היתכנות: מודד+ועדה+מהנדס","early":"2026-11-30","late":"2026-11-30","cond":"T-011–T-013","notes":"","ord":5},{"id":"M5","name":"החלטות מטבח/מרפסת/קליניקה","early":"2026-12-20","late":"2026-12-20","cond":"T-020–T-022","notes":"","ord":6},{"id":"M6","name":"מפתח","early":"2026-12-01","late":"2027-01-05","cond":"T-050","notes":"","ord":7},{"id":"M7","name":"חוזה קבלן חתום","early":"2026-12-11","late":"2027-01-15","cond":"T-031","notes":"","ord":8},{"id":"M8","name":"סיום שלד/פתחים + הכנות מיזוג","early":"2027-01-05","late":"2027-02-09","cond":"T-043,T-051 (הנחה)","notes":"","ord":9},{"id":"M9","name":"סיום גמר + מטבח","early":"2027-02-16","late":"2027-03-23","cond":"T-053,T-058 (הנחה)","notes":"","ord":10},{"id":"M10","name":"כניסה לבית","early":"2026-12-02","late":"2027-01-10","cond":"A: מיד אחרי מפתח; B: אחרי ~חודש ביניים (T-123)","notes":"","ord":11}],"decisions":[{"id":"D01","no":"1","title":"תקציב כולל + רזרבה + סדר עדיפויות","why":"בלעדיו אין תעדוף","dep":"מיידי; אריאל","taskId":"T-001","related":"","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":0},{"id":"D02","no":"2","title":"השגת היתר קיים + תצ\"ר/חלוקה + חישוב זכויות של 823/3","why":"קובע אם בכלל יש מ\"ר לסגירת מרפסת/תוספות","dep":"מיידי; אדריכל/ארכיון הוועדה","taskId":"T-003","related":"T-011,T-012","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":1},{"id":"D03","no":"3","title":"היקף אנשי מקצוע (אדריכל רישוי, מהנדס, מודד)","why":"נדרש להיתר (תכנית עיצוב, פיתוח, מדידה — פרק ה')","dep":"לפני שלב 1","taskId":"T-010","related":"","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":2},{"id":"D04","no":"4","title":"ללכת או לא לפגישת היתכנות מול הוועדה (מטה בנימין) על קליניקה + מחסן","why":"הקליניקה לא מותרת לכאורה; מחסן בקו 0 לא מותר במגורים ב'","dep":"אחרי 2; לפני כל תכנון קליניקה","taskId":"T-012","related":"T-021","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":3},{"id":"D05","no":"5","title":"מודד: גבולות 823/3, חזית/צד/אחור, שטח פלישה","why":"קווי 5/3 מ' נמדדים מהגבולות","dep":"במקביל ל-4","taskId":"T-011","related":"","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":4},{"id":"D06","no":"6","title":"חלופה לקליניקה אם תסורב: בתוך קווי הבניין/בתוך הבית, או ויתור","why":"אחרת כל תכנון החצר תקוע","dep":"אחרי 4","taskId":"T-021","related":"T-012","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":5},{"id":"D07","no":"7","title":"אילו חלונות בסלון להרחיב (מהנדס + עמידה בחזית אבן/טיח)","why":"בלתי הפיך; לא דורש זכויות בנייה אבל כן היתר לשינוי חזית (לאמת)","dep":"אחרי תוכניות קבלן","taskId":"T-013","related":"T-003,T-033","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":6},{"id":"D08","no":"8","title":"היקף סגירת מרפסת ההורים — לפי יתרת זכויות","why":"נספר ב-190 מ\"ר; פרגולה לא סוגרים","dep":"אחרי 2","taskId":"T-020","related":"T-012","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":7},{"id":"D09","no":"9","title":"היקף שיפוץ המטבח + מזווה","why":"נקודות חשמל-מים ורכש","dep":"לפני מערכות","taskId":"T-022","related":"T-055,T-081","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":8},{"id":"D10","no":"10","title":"קונספט חוץ: פרגולה פתוחה (≤50 מ\"ר, ≤3 מ'), גדר ≤1.5 מ' בחומר מאושר, גינה 20–50 אלף, 10–30% שטח מחלחל","why":"תכנית פיתוח היא תנאי להיתר","dep":"לפני מערכות/פיתוח","taskId":"T-023","related":"T-070","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":9},{"id":"DAB","no":"A/B","title":"🔥 דחוף: תרחיש A (נכנסים ישר לבית) או B (מגורי ביניים + אחסון)","why":"הדירה השכורה מתפנה בתחילת דצמבר","dep":"עד 10.11 (T-101)","taskId":"T-101","related":"T-004,T-060","notes":"","outcome":"","decidedAt":"","decidedBy":"","ord":10},{"id":"DOK","no":"✔","title":"מגורים בזמן השיפוץ","why":"","dep":"","taskId":"T-002","related":"T-110–T-116","notes":"החלטה שהתקבלה (במספור הקודם: החלטה #2)","outcome":"גרים בבית בזמן השיפוץ אם המפתח בתחילת דצמבר (תרחיש A)","decidedAt":"2026-10-11","decidedBy":"","ord":11}],"contacts":[{"id":"C01","domain":"מוכר/יזם — מסירת מפתח","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-004","notes":"","ord":0},{"id":"C02","domain":"אדריכל רישוי","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-010","notes":"","ord":1},{"id":"C03","domain":"מהנדס קונסטרוקציה","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-013","notes":"","ord":2},{"id":"C04","domain":"מודד מוסמך","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-011","notes":"","ord":3},{"id":"C05","domain":"ועדה מיוחדת מטה בנימין / מהנדס המועצה","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-012","notes":"","ord":4},{"id":"C06","domain":"קבלן ראשי","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-030","notes":"","ord":5},{"id":"C07","domain":"חשמלאי","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-014","notes":"","ord":6},{"id":"C08","domain":"אינסטלטור","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-014","notes":"","ord":7},{"id":"C09","domain":"מיזוג אוויר","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-042","notes":"","ord":8},{"id":"C10","domain":"מטבחים","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-055","notes":"","ord":9},{"id":"C11","domain":"נגר/ארונות","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-056","notes":"","ord":10},{"id":"C12","domain":"אלומיניום/חלונות","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-033","notes":"","ord":11},{"id":"C13","domain":"מובילים","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-061","notes":"","ord":12},{"id":"C14","domain":"בעל הדירה הנוכחית","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-060","notes":"","ord":13},{"id":"C15","domain":"חברת חשמל","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-063","notes":"","ord":14},{"id":"C16","domain":"מים/ארנונה — מועצה","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-064","notes":"","ord":15},{"id":"C17","domain":"ספק גז","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-065","notes":"","ord":16},{"id":"C18","domain":"אינטרנט","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-066","notes":"","ord":17},{"id":"C19","domain":"ביטוח","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-068","notes":"","ord":18},{"id":"C20","domain":"גנן/פיתוח","name":"","company":"","phone":"","email":"","q1":null,"q2":null,"q3":null,"chosen":null,"status":"לא התחיל","taskId":"T-071","notes":"","ord":19}]};
+SEED.items = [
+  {id:'I001',name:'שולחן אוכל ל-20 סועדים',room:'פינת אוכל',cat:'ריהוט',status:'רעיון',price:null,qty:1,link:'',img:'',vendor:'',taskId:'T-080',notes:'',approvals:{}},
+  {id:'I002',name:'שזלונג',room:'סלון',cat:'ריהוט',status:'רעיון',price:null,qty:1,link:'',img:'',vendor:'',taskId:'T-080',notes:'',approvals:{}},
+  {id:'I003',name:'ספה נפתחת',room:'חדר אורחים',cat:'ריהוט',status:'רעיון',price:null,qty:1,link:'',img:'',vendor:'',taskId:'T-080',notes:'',approvals:{}},
+  {id:'I004',name:'כיסאות בר',room:'מטבח',cat:'ריהוט',status:'רעיון',price:null,qty:4,link:'',img:'',vendor:'',taskId:'T-080',notes:'',approvals:{}},
+  {id:'I005',name:'מקרר ראשי',room:'מטבח',cat:'מכשירי חשמל',status:'רעיון',price:null,qty:1,link:'',img:'',vendor:'',taskId:'T-081',notes:'מיקום המקרר הראשי תלוי במדידות (T-005)',approvals:{}},
+  {id:'I006',name:'מקרר משני / מזווה',room:'מזווה',cat:'מכשירי חשמל',status:'רעיון',price:null,qty:1,link:'',img:'',vendor:'',taskId:'T-081',notes:'',approvals:{}}
+];
+SEED.settings = {
+  scenario:'A', keyActual:'', todayOverride:'', totalBudget:null, roomBudgets:{},
+  people:[
+    {id:'ariel',name:'אריאל',email:'arielkal@gmail.com',kw:'אריאל',family:true,g:'m'},
+    {id:'rinat',name:'רינת',email:'',kw:'רינת',family:true,g:'f'},
+    {id:'arch',name:'האדריכלית',email:'',kw:'אדריכל',family:false,g:'f'}
+  ],
+  seeded:true
+};
+
+/* ============================ constants ============================ */
+const KEY_A = '2026-12-01', KEY_B = '2027-01-05';
+const ST = {
+  'לא התחיל':'todo','בתהליך':'prog','ממתין':'wait','תקוע':'stuck','באיחור':'late','הושלם':'done','בוטל':'cancel'
+};
+const SETTABLE = ['לא התחיל','בתהליך','ממתין','תקוע','הושלם','בוטל'];
+const BOARD_COLS = ['לא התחיל','בתהליך','ממתין','תקוע','באיחור','הושלם'];
+const PRIOS = ['גבוהה','בינונית','נמוכה'];
+const PRIO_CLS = {'גבוהה':'p1','בינונית':'p2','נמוכה':'p3'};
+const PHASE_ORDER = ['0 איסוף מידע','1 היתכנות','2 תכנון','3 התקשרויות','4 שלד ופתחים','5 מערכות','6 גמר פנים','7 חוץ ופיתוח','8 ריהוט','9 מסירה','הכנה למעבר','A: מגורים בזמן שיפוץ','B: מגורי ביניים','ניהול'];
+const ROOMS = ['סלון','מטבח','מזווה','פינת אוכל','חדר הורים','מרפסת הורים','חדרי ילדים','חדר אורחים','קליניקה','מחסן','חצר וגינה','כללי'];
+const ITEM_ST = ['רעיון','לבחירה','מאושר','הוזמן','סופק','בוטל'];
+const ITEM_ST_CLS = {'רעיון':'todo','לבחירה':'wait','מאושר':'prog','הוזמן':'stuck','סופק':'done','בוטל':'cancel'};
+const ITEM_COMMITTED = ['מאושר','הוזמן','סופק'];
+const CATS = ['ריהוט','מכשירי חשמל','תאורה','טקסטיל','ריצוף וחיפוי','כלים סניטריים','נגרות','אביזרים ועיצוב','גינה','אחר'];
+const CAT_EMO = {'ריהוט':'🛋️','מכשירי חשמל':'🧊','תאורה':'💡','טקסטיל':'🧵','ריצוף וחיפוי':'🧱','כלים סניטריים':'🚿','נגרות':'🪵','אביזרים ועיצוב':'🪴','גינה':'🌿','אחר':'📦'};
+const CONTACT_ST = ['לא התחיל','בתהליך','התקבלו הצעות','נבחר','בוטל'];
+const CONTACT_ST_CLS = {'לא התחיל':'todo','בתהליך':'prog','התקבלו הצעות':'wait','נבחר':'done','בוטל':'cancel'};
+const COLS = ['tasks','milestones','decisions','contacts','items','activity'];
+
+/* ============================ icons ============================ */
+const IC = {
+  home:'<path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/>',
+  tasks:'<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>',
+  board:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 7v7"/><path d="M12 7v4"/><path d="M16 7v9"/>',
+  time:'<path d="M21 6H11"/><path d="M16 12H4"/><path d="M19 18H9"/>',
+  sofa:'<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0z"/><path d="M4 18v2"/><path d="M20 18v2"/>',
+  dec:'<path d="M12 3v18"/><path d="M19 6H8l-3 3 3 3h11z"/><path d="M8 21h8"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  act:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  set:'<path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/>',
+  more:'<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+  plus:'<path d="M12 5v14"/><path d="M5 12h14"/>',
+  x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  share:'<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/>',
+  trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+  msg:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  send:'<path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>',
+  dl:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+  up:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/>',
+  key:'<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>',
+  out:'<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/>',
+  clip:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>'
+};
+const ic = (n, cls='') => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`;
+const LOGO = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M14 50 50 20l36 30v34a4 4 0 0 1-4 4H60V64H40v24H18a4 4 0 0 1-4-4z"/></svg>';
+
+/* ============================ utils ============================ */
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = u => { try { const x = new URL(String(u||'').trim()); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch { return ''; } };
+const dn = iso => { if(!iso) return NaN; const [y,m,d] = iso.split('-').map(Number); return Date.UTC(y,m-1,d)/864e5; };
+const fromDn = n => new Date(n*864e5).toISOString().slice(0,10);
+const addDays = (iso,n) => fromDn(dn(iso)+n);
+const localToday = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+const fmt = iso => { if(!iso) return '—'; const [y,m,d]=iso.split('-'); return `${+d}.${+m}`; };
+const fmtY = iso => { if(!iso) return '—'; const [y,m,d]=iso.split('-'); return `${+d}.${+m}.${y.slice(2)}`; };
+const HEB_MONTHS = ['ינו׳','פבר׳','מרץ','אפר׳','מאי','יוני','יולי','אוג׳','ספט׳','אוק׳','נוב׳','דצמ׳'];
+const HEB_MONTHS_FULL = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+const hebDate = iso => { const d=new Date(dn(iso)*864e5); return new Intl.DateTimeFormat('he-IL',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(d); };
+const money = n => (n==null||n===''||isNaN(n)) ? '—' : '₪' + Math.round(Number(n)).toLocaleString('he-IL');
+const numOrNull = v => { if(v===''||v==null) return null; const n = Number(String(v).replace(/[^\d.\-]/g,'')); return isNaN(n)?null:n; };
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const relDays = n => n===0 ? 'היום' : n===1 ? 'מחר' : n===-1 ? 'אתמול' : n>0 ? `בעוד ${n} ימים` : `לפני ${-n} ימים`;
+const timeAgo = ts => { const s=(Date.now()-ts)/1000; if(s<60) return 'עכשיו'; if(s<3600) return `לפני ${Math.floor(s/60)} דק׳`; if(s<86400) return `לפני ${Math.floor(s/3600)} שע׳`; const d=new Date(ts); return `${d.getDate()}.${d.getMonth()+1} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+const lsGet = (k,def) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch { return def; } };
+const lsSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+const clone = o => JSON.parse(JSON.stringify(o));
+function setPath(obj, path, val){ const ks=path.split('.'); let o=obj; for(let i=0;i<ks.length-1;i++){ if(typeof o[ks[i]]!=='object'||o[ks[i]]===null) o[ks[i]]={}; o=o[ks[i]]; } o[ks[ks.length-1]]=val; }
+
+/* ============================ state ============================ */
+const S = { tasks:{}, milestones:{}, decisions:{}, contacts:{}, items:{}, activity:{}, settings:clone(SEED.settings) };
+const prefs = Object.assign({ me:'', taskFilter:{q:'',owner:'',phase:'',status:'',prio:'',hideDone:true,group:'phase'}, showOther:false, homeMine:false, boardOwner:'', gHideDone:false, gPhase:'', gZoom:4, shopRoom:'', shopStatus:'' }, lsGet('alon.prefs',{}));
+const savePrefs = () => lsSet('alon.prefs', prefs);
+let backend = null;
+let currentUser = null; // {email, name}
+let syncState = 'local';
+
+/* ============================ domain logic ============================ */
+const today = () => S.settings.todayOverride || localToday();
+const scenario = () => S.settings.scenario === 'B' ? 'B' : 'A';
+const keyActive = () => S.settings.keyActual || (scenario()==='B' ? KEY_B : KEY_A);
+function activeDate(t, which){
+  const early = which==='s' ? t.sA : t.dA, late = which==='s' ? t.sB : t.dB;
+  if(!early) return late || '';
+  if(t.mode==='K' && S.settings.keyActual) return fromDn(dn(early) + dn(S.settings.keyActual) - dn(KEY_A));
+  if(scenario()==='B') return late || early;
+  return early;
+}
+const tStart = t => activeDate(t,'s');
+const tDue = t => activeDate(t,'d');
+function effStatus(t){
+  const s = t.status || 'לא התחיל';
+  if(s!=='הושלם' && s!=='בוטל'){ const d=tDue(t); if(d && d < today()) return 'באיחור'; }
+  return s;
+}
+const isClosed = t => t.status==='הושלם' || t.status==='בוטל';
+function progress(t){
+  if(t.pm!=null && t.pm!=='') return Math.max(0,Math.min(100,Number(t.pm)))/100;
+  return {'הושלם':1,'בתהליך':.5,'ממתין':.25,'תקוע':.25}[t.status] || 0;
+}
+function msDate(m){
+  if(!m.early) return m.late||'';
+  if(S.settings.keyActual && m.early!==m.late) return fromDn(dn(m.early) + dn(S.settings.keyActual) - dn(KEY_A));
+  return scenario()==='B' ? (m.late||m.early) : m.early;
+}
+const evictDate = () => { const m = S.milestones['M3c']; return m ? msDate(m) : ''; };
+function inScenario(t){
+  if(prefs.showOther) return true;
+  const p = t.phase || '';
+  if(p.startsWith('A:')) return scenario()==='A';
+  if(p.startsWith('B:')) return scenario()==='B';
+  return true;
+}
+const allTasks = () => Object.values(S.tasks).sort((a,b)=> a.id.localeCompare(b.id, 'en', {numeric:true}));
+const visTasks = () => allTasks().filter(inScenario);
+function phases(){
+  const set = new Set(PHASE_ORDER); allTasks().forEach(t=> t.phase && set.add(t.phase));
+  return [...set].filter(p => allTasks().some(t=>t.phase===p) || PHASE_ORDER.includes(p));
+}
+const people = () => S.settings.people || [];
+const person = id => people().find(p=>p.id===id);
+const me = () => person(prefs.me) || null;
+function ownerPeople(owner){
+  const o = owner || '';
+  return people().filter(p => (p.kw && o.includes(p.kw)) || (o.includes('כל המשפחה') && p.family));
+}
+function isMine(t, pid){
+  const p = person(pid||prefs.me); if(!p) return false;
+  const o = t.owner||''; return (p.kw && o.includes(p.kw)) || (p.family && o.includes('כל המשפחה'));
+}
+const pColor = id => ({ariel:'var(--p-ariel)',rinat:'var(--p-rinat)',arch:'var(--p-arch)'}[id] || `hsl(${[...String(id)].reduce((a,c)=>a+c.charCodeAt(0),0)%360} 35% 48%)`);
+const avatar = (p, cls='') => p ? `<span class="av ${cls}" style="background:${pColor(p.id)}" title="${esc(p.name)}">${esc((p.name||'?').replace(/^ה(?=אדר)/,'').charAt(0))}</span>` : '';
+const pill = (s, extra='') => `<span class="pill s-${ST[s]||'todo'}" ${extra}>${esc(s)}</span>`;
+function dueLabel(t){
+  const d = tDue(t); if(!d) return {txt:'', cls:''};
+  if(isClosed(t)) return {txt: fmt(d), cls:''};
+  const n = dn(d) - dn(today());
+  return {txt: n<0 ? `באיחור ${-n} ימ׳` : n===0 ? 'היום' : n===1 ? 'מחר' : n<=7 ? `בעוד ${n} ימים` : fmt(d), cls: n<0 ? 'late' : n<=3 ? 'soon' : ''};
+}
+function nextTaskId(){
+  const nums = Object.keys(S.tasks).map(k=>parseInt(k.replace(/\D/g,''))).filter(n=>!isNaN(n));
+  const n = (nums.length ? Math.max(...nums) : 0) + 1;
+  return 'T-' + String(n).padStart(3,'0');
+}
+function decisionsSorted(){ return Object.values(S.decisions).sort((a,b)=>(a.ord??99)-(b.ord??99)); }
+function decStatus(d){
+  if(d.outcome && d.decidedAt) return 'הושלם';
+  const t = S.tasks[d.taskId]; return t ? effStatus(t) : 'לא התחיל';
+}
+const msSorted = () => Object.values(S.milestones).sort((a,b)=> (msDate(a)||'').localeCompare(msDate(b)||''));
+
+/* ============================ backends ============================ */
+const LocalBackend = {
+  key:'alon.data.v1',
+  async init(){
+    const d = lsGet(this.key, null);
+    if(d && d.tasks){ COLS.forEach(c=> S[c] = d[c] || {}); S.settings = Object.assign(clone(SEED.settings), d.settings||{}); }
+    else { seedInto(S); this.persist(); }
+    syncState = 'local';
+    window.addEventListener('storage', e => { if(e.key===this.key){ const d=lsGet(this.key,null); if(d){ COLS.forEach(c=> S[c]=d[c]||{}); S.settings=Object.assign(clone(SEED.settings), d.settings||{}); render(); } } });
+  },
+  persist(){ const o={}; COLS.forEach(c=>o[c]=S[c]); o.settings=S.settings; lsSet(this.key,o); },
+  async put(col, doc){ S[col][doc.id] = doc; this.persist(); },
+  async patch(col, id, f){ if(!S[col][id]) return; for(const k in f) setPath(S[col][id], k, f[k]); this.persist(); },
+  async del(col, id){ delete S[col][id]; this.persist(); },
+  async addComment(col,id,c){ const d=S[col][id]; if(!d) return; (d.comments ||= []).push(c); this.persist(); },
+  async setSettings(f){ for(const k in f) setPath(S.settings, k, f[k]); this.persist(); },
+  async bulk(ops){ ops.forEach(o=>{ if(o.op==='put') S[o.col][o.doc.id]=o.doc; else if(o.op==='del') delete S[o.col][o.id]; else if(o.op==='settings') S.settings=Object.assign(S.settings,o.data); }); this.persist(); },
+  async signOut(){}
+};
+function seedInto(target){
+  ['tasks','milestones','decisions','contacts','items'].forEach(c=>{ target[c]={}; (SEED[c]||[]).forEach(d=> target[c][d.id]=clone(d)); });
+  target.activity = {};
+  target.settings = clone(SEED.settings);
+}
+
+const FirebaseBackend = {
+  async init(){
+    const base = `https://www.gstatic.com/firebasejs/${FB_VER}`;
+    const [A, Au, F] = await Promise.all([import(`${base}/firebase-app.js`), import(`${base}/firebase-auth.js`), import(`${base}/firebase-firestore.js`)]);
+    this.A=A; this.Au=Au; this.F=F;
+    this.app = A.initializeApp(FIREBASE_CONFIG);
+    try { this.db = F.initializeFirestore(this.app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }); }
+    catch { this.db = F.getFirestore(this.app); }
+    this.auth = Au.getAuth(this.app);
+    this.auth.languageCode = 'he';
+    Au.onAuthStateChanged(this.auth, async user => {
+      if(!user){ currentUser=null; renderLogin(); return; }
+      if(this.subscribed) return; this.subscribed = true;
+      currentUser = { email:user.email, name:user.displayName, photo:user.photoURL };
+      const p = people().find(p=>p.email && p.email.toLowerCase()===String(user.email).toLowerCase());
+      await this.subscribe();
+      const p2 = people().find(p=>p.email && p.email.toLowerCase()===String(user.email).toLowerCase()) || p;
+      if(p2){ prefs.me=p2.id; savePrefs(); }
+      if(!this.denied) startApp();
+    });
+  },
+  async login(){
+    const p = new this.Au.GoogleAuthProvider(); p.setCustomParameters({prompt:'select_account'});
+    try { await this.Au.signInWithPopup(this.auth, p); }
+    catch(e){ if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment') await this.Au.signInWithRedirect(this.auth,p); else toast('ההתחברות נכשלה: '+(e.code||e.message)); }
+  },
+  async signOut(){ await this.Au.signOut(this.auth); location.reload(); },
+  ref(col,id){ return this.F.doc(this.db,'homes',PROJECT_ID,col,id); },
+  setRef(){ return this.F.doc(this.db,'homes',PROJECT_ID,'meta','settings'); },
+  subscribe(){
+    const F=this.F; let first = COLS.length+1, done=false;
+    return new Promise(resolve=>{
+      const ready = () => { if(--first<=0 && !done){ done=true; resolve(); afterFirstLoad(); } };
+      const onErr = e => { console.error(e); if(e.code==='permission-denied'){ this.denied=true; renderDenied(); } else toast('שגיאת סנכרון: '+e.code); if(!done){ done=true; resolve(); } };
+      COLS.forEach(col=>{
+        let q = F.collection(this.db,'homes',PROJECT_ID,col);
+        if(col==='activity') q = F.query(q, F.orderBy('ts','desc'), F.limit(300));
+        let firstSnap = true;
+        F.onSnapshot(q, {includeMetadataChanges:true}, snap=>{
+          const o={}; snap.forEach(d=> o[d.id]=Object.assign({id:d.id}, d.data())); S[col]=o;
+          setSync(snap.metadata.hasPendingWrites ? 'saving' : (snap.metadata.fromCache && !navigator.onLine ? 'off' : 'cloud'));
+          if(firstSnap){ firstSnap=false; ready(); } else scheduleRender(col);
+        }, onErr);
+      });
+      let fs=true;
+      F.onSnapshot(this.setRef(), snap=>{
+        this.settingsExists = snap.exists();
+        S.settings = Object.assign(clone(SEED.settings), snap.data()||{});
+        if(fs){ fs=false; ready(); } else scheduleRender('settings');
+      }, onErr);
+    });
+  },
+  // optimistic: update local state immediately; Firestore queues the write (works offline too)
+  fire(p){ p.catch(e=>{ console.error(e); toast(e.code==='permission-denied' ? 'אין הרשאה לשמור — בדקו שהמייל שלכם מורשה' : 'השמירה נכשלה: '+(e.code||'')); }); },
+  async put(col, doc){ S[col][doc.id]=clone(doc); this.fire(this.F.setDoc(this.ref(col,doc.id), doc)); },
+  async patch(col, id, f){ if(S[col][id]) for(const k in f) setPath(S[col][id], k, f[k]); this.fire(this.F.updateDoc(this.ref(col,id), f)); },
+  async del(col, id){ delete S[col][id]; this.fire(this.F.deleteDoc(this.ref(col,id))); },
+  async addComment(col,id,c){ const d=S[col][id]; if(d) (d.comments ||= []).push(c); this.fire(this.F.updateDoc(this.ref(col,id), {comments: this.F.arrayUnion(c)})); },
+  async setSettings(f){ for(const k in f) setPath(S.settings, k, f[k]); this.fire(this.F.setDoc(this.setRef(), unflatten(f), {merge:true})); },
+  async bulk(ops){
+    for(let i=0;i<ops.length;i+=400){
+      const b = this.F.writeBatch(this.db);
+      ops.slice(i,i+400).forEach(o=>{
+        if(o.op==='put') b.set(this.ref(o.col,o.doc.id), o.doc);
+        else if(o.op==='del') b.delete(this.ref(o.col,o.id));
+        else if(o.op==='settings') b.set(this.setRef(), o.data, {merge:true});
+      });
+      await b.commit();
+    }
+  }
+};
+function unflatten(f){ const o={}; for(const k in f) setPath(o,k,f[k]); return o; }
+async function afterFirstLoad(){
+  // seed the shared database the very first time
+  if(Object.keys(S.tasks).length===0 && !FirebaseBackend.settingsExists){
+    const ops=[]; ['tasks','milestones','decisions','contacts','items'].forEach(c=> (SEED[c]||[]).forEach(d=> ops.push({op:'put',col:c,doc:clone(d)})));
+    ops.push({op:'settings',data:clone(SEED.settings)});
+    try { await backend.bulk(ops); toast('נטענו נתוני הפתיחה מהאקסל'); } catch(e){ console.error(e); }
+  }
+}
+function setSync(s){ if(syncState===s) return; syncState=s; const el=$('#sync'); if(el) el.outerHTML = syncPill(); }
+window.addEventListener('online', ()=> backend===FirebaseBackend && setSync('cloud'));
+window.addEventListener('offline', ()=> backend===FirebaseBackend && setSync('off'));
+
+/* ============================ actions (write + log) ============================ */
+const myName = () => me()?.name || currentUser?.name || 'מישהו';
+const FINAL = {'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+const gender = text => { const f = me()?.g==='f'; return text.replace(/([\u0590-\u05FF]+)\/(תה|ה)/g, (all,w,suf)=> !f ? w : suf==='תה' ? w.slice(0,-1)+'תה' : w.slice(0,-1)+(FINAL[w.slice(-1)]||w.slice(-1))+'ה'); };
+async function log(text, ref){
+  text = gender(text);
+  const a = {id: uid('a'), ts: Date.now(), who: prefs.me || '', whoName: myName(), text, ref: ref||null};
+  if(backend===LocalBackend){ S.activity[a.id]=a; const ids=Object.keys(S.activity); if(ids.length>400){ ids.sort((x,y)=>S.activity[x].ts-S.activity[y].ts).slice(0,ids.length-400).forEach(i=>delete S.activity[i]); } }
+  try { await backend.put('activity', a); } catch(e){ console.error(e); }
+}
+async function write(fn){
+  try { await fn(); } catch(e){ console.error(e); toast(e.code==='permission-denied' ? 'אין הרשאה לשמור — בדקו שהמייל שלכם מורשה' : 'השמירה נכשלה'); }
+  render(); flashSaved();
+}
+const stamp = () => ({updatedAt: Date.now(), updatedBy: prefs.me||''});
+function setTaskStatus(id, s, {silent}={}){
+  const t = S.tasks[id]; if(!t || t.status===s) return;
+  const prev = t.status;
+  write(async()=>{ await backend.patch('tasks', id, Object.assign({status:s}, stamp())); if(backend===LocalBackend) render(); await log(`שינה/תה סטטוס של "${t.task}" ל-${s}`, {col:'tasks',id}); });
+  if(!silent) toast(`"${trunc(t.task,28)}" ← ${s}`, ()=> write(()=> backend.patch('tasks', id, {status:prev})));
+}
+const trunc = (s,n) => (s||'').length>n ? s.slice(0,n-1)+'…' : (s||'');
+
+/* ============================ rendering shell ============================ */
+const NAV = [
+  {r:'home', t:'בית', i:'home'},
+  {r:'tasks', t:'משימות', i:'tasks'},
+  {r:'board', t:'לוח קנבן', i:'board'},
+  {r:'timeline', t:'ציר זמן', i:'time'},
+  {r:'shop', t:'עיצוב ורכש', i:'sofa'},
+  {sep:1},
+  {r:'decisions', t:'החלטות', i:'dec'},
+  {r:'vendors', t:'ספקים והצעות', i:'users'},
+  {r:'activity', t:'מה חדש', i:'act'},
+  {r:'settings', t:'הגדרות', i:'set'}
+];
+const TABS = [{r:'home',t:'בית',i:'home'},{r:'tasks',t:'משימות',i:'tasks'},{r:'timeline',t:'ציר זמן',i:'time'},{r:'shop',t:'עיצוב ורכש',i:'sofa'},{r:'more',t:'עוד',i:'more'}];
+let route = 'home';
+function parseRoute(){
+  const h = location.hash.replace(/^#\/?/,'');
+  const [r, a] = h.split('/');
+  route = r || 'home';
+  return a ? decodeURIComponent(a) : null;
+}
+function syncPill(){
+  const map = {local:['local','מצב מקומי'], cloud:['','מסונכרן'], saving:['saving','שומר…'], off:['off','לא מקוון']};
+  const [c,t] = map[syncState] || map.local;
+  return `<span class="sync ${c}" id="sync" title="${backend===LocalBackend?'הנתונים נשמרים רק בדפדפן הזה':'מחובר לענן — כולם רואים את אותם נתונים'}"><i></i>${t}</span>`;
+}
+function shell(){
+  const late = visTasks().filter(t=>effStatus(t)==='באיחור').length;
+  const moreRoutes = ['more','decisions','vendors','activity','settings','board'];
+  return `
+  <header class="topbar">
+    <a class="brand" href="#/home"><span class="logo">${LOGO}</span><span><b>בית אלון</b><span>ניהול שיפוץ והלבשת הבית</span></span></a>
+    <div class="top-sp"></div>
+    ${syncPill()}
+    <button class="me-btn" data-a="pickMe" aria-label="החלפת משתמש">${me() ? avatar(me(),'lg') : '<span class="av lg">?</span>'}</button>
+  </header>
+  <div class="layout">
+    <nav class="sidenav" aria-label="ניווט ראשי">
+      ${NAV.map(n=> n.sep ? '<div class="sep"></div>' : `<a href="#/${n.r}" class="${route===n.r?'on':''}">${ic(n.i)}<span>${n.t}</span>${n.r==='tasks'&&late?`<span class="cnt">${late}</span>`:''}</a>`).join('')}
+      <div class="foot">${backend===LocalBackend ? 'מצב מקומי · ' : ''}${esc(myName())}</div>
+    </nav>
+    <main id="view" tabindex="-1"></main>
+  </div>
+  <nav class="tabbar" aria-label="ניווט">
+    ${TABS.map(n=>`<a href="#/${n.r}" class="${(route===n.r || (n.r==='more' && moreRoutes.includes(route)))?'on':''}">${ic(n.i)}<span>${n.t}</span></a>`).join('')}
+  </nav>`;
+}
+let renderQueued = false;
+function scheduleRender(col){
+  if(renderQueued) return; renderQueued = true;
+  requestAnimationFrame(()=>{ renderQueued=false; render(); refreshDrawer(col); });
+}
+function render(){
+  if(backend===FirebaseBackend && (FirebaseBackend.denied || !currentUser)) return;
+  const root = $('#root');
+  const ae = document.activeElement; const fid = ae && ae.id && root.contains(ae) ? ae.id : null; const sel = fid && 'selectionStart' in ae ? [ae.selectionStart, ae.selectionEnd] : null;
+  const scrollX = {}; root.querySelectorAll('[data-keepscroll]').forEach(el=> scrollX[el.dataset.keepscroll] = [el.scrollLeft, el.scrollTop]);
+  root.innerHTML = shell();
+  const v = $('#view');
+  const views = {home:vHome, tasks:vTasks, board:vBoard, timeline:vTimeline, shop:vShop, decisions:vDecisions, vendors:vVendors, activity:vActivity, settings:vSettings, more:vMore};
+  v.innerHTML = (views[route] || vHome)();
+  root.querySelectorAll('[data-keepscroll]').forEach(el=>{ const s=scrollX[el.dataset.keepscroll]; if(s){ el.scrollLeft=s[0]; el.scrollTop=s[1]; } });
+  if(fid){ const el=document.getElementById(fid); if(el){ el.focus(); if(sel) try{ el.setSelectionRange(sel[0],sel[1]); }catch{} } }
+  afterRender();
+}
+let pendingAfter = [];
+function afterRender(){ const f=pendingAfter; pendingAfter=[]; f.forEach(fn=>fn()); bindBoardDnD(); }
+
+/* ============================ views ============================ */
+function taskRow(t, opts={}){
+  const s = effStatus(t), c = ST[s], dl = dueLabel(t);
+  const ps = ownerPeople(t.owner);
+  const icon = s==='הושלם' ? ic('check') : s==='בוטל' ? ic('x') : '';
+  return `<div class="trow ${isClosed(t)?'done':''}" data-a="openTask" data-id="${esc(t.id)}">
+    <button class="sbtn s-${c}" data-a="statusMenu" data-id="${esc(t.id)}" aria-label="סטטוס: ${esc(s)} — לחצו לשינוי" title="${esc(s)}">${icon}</button>
+    <div class="tm"><div class="tt">${esc(t.task)}</div>
+      <div class="meta"><span class="prio ${PRIO_CLS[t.prio]||'p3'}" title="עדיפות ${esc(t.prio||'')}"></span>${s!=='לא התחיל'?pill(s):''}${opts.noPhase?'':`<span>${esc(t.phase)}</span>`}<span>· ${esc(t.owner||'ללא אחראי')}</span>${(t.comments||[]).length?`<span>· ${ic('msg','sm')} ${(t.comments||[]).length}</span>`:''}</div>
+    </div>
+    ${ps.length?`<span class="avs">${ps.map(p=>avatar(p)).join('')}</span>`:''}
+    <div class="due ${dl.cls}">${dl.txt}</div>
+  </div>`;
+}
+function ring(p){
+  const r=19, C=2*Math.PI*r;
+  return `<svg class="ring" viewBox="0 0 46 46" aria-hidden="true"><circle cx="23" cy="23" r="${r}" fill="none" stroke="var(--sunk)" stroke-width="6"/><circle cx="23" cy="23" r="${r}" fill="none" stroke="var(--olive)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C*p} ${C}" transform="rotate(-90 23 23)"/></svg>`;
+}
+function scenarioCtl(){
+  const k = S.settings.keyActual;
+  return `<div class="scen">
+    <div class="lbl"><b>${ic('key','sm')} מפתח: ${fmtY(keyActive())}</b>${k ? 'נקבע בפועל' : scenario()==='A' ? 'תרחיש A · נכנסים מיד וגרים בבית' : 'תרחיש B · מגורי ביניים + אחסון'}</div>
+    <div class="seg" role="group" aria-label="תרחיש">
+      <button class="${scenario()==='A'?'on':''}" data-a="setScenario" data-v="A" aria-pressed="${scenario()==='A'}">A · 1.12</button>
+      <button class="${scenario()==='B'?'on':''}" data-a="setScenario" data-v="B" aria-pressed="${scenario()==='B'}">B · 5.1</button>
+    </div>
+  </div>`;
+}
+function vHome(){
+  const ts = visTasks(), td = today();
+  const open = ts.filter(t=>!isClosed(t));
+  const done = ts.filter(t=>t.status==='הושלם').length;
+  const late = ts.filter(t=>effStatus(t)==='באיחור');
+  const stuck = ts.filter(t=>['תקוע','ממתין'].includes(effStatus(t)));
+  const live = ts.filter(t=>t.status!=='בוטל');
+  const pct = live.length ? live.reduce((a,t)=>a+progress(t),0)/live.length : 0;
+  const dKey = dn(keyActive()) - dn(td), ev = evictDate(), dEv = ev ? dn(ev)-dn(td) : null;
+  const horizon = addDays(td,14);
+  let soon = open.filter(t=> (tStart(t)||tDue(t)) <= horizon || effStatus(t)==='באיחור');
+  if(prefs.homeMine && me()) soon = soon.filter(t=>isMine(t));
+  soon.sort((a,b)=> (tDue(a)||'9').localeCompare(tDue(b)||'9'));
+  const mineOpen = me() ? open.filter(t=>isMine(t)) : [];
+  const mineLate = mineOpen.filter(t=>effStatus(t)==='באיחור').length;
+  const h = new Date().getHours();
+  const greet = h<5?'לילה טוב':h<12?'בוקר טוב':h<17?'צהריים טובים':h<21?'ערב טוב':'לילה טוב';
+  const decs = decisionsSorted().filter(d=> decStatus(d)!=='הושלם').sort((a,b)=> (tDue(S.tasks[a.taskId]||{})||'9').localeCompare(tDue(S.tasks[b.taskId]||{})||'9')).slice(0,5);
+  const mss = msSorted().filter(m=> msDate(m) >= td).slice(0,5);
+  const counts = {}; ts.forEach(t=>{ const s=effStatus(t); counts[s]=(counts[s]||0)+1; });
+  const phs = phases().filter(p=> ts.some(t=>t.phase===p));
+  const bud = budgetSummary();
+  return `
+  ${backend===LocalBackend ? `<div class="banner">${ic('out')}<div><b>מצב מקומי</b>הנתונים נשמרים רק בדפדפן הזה. כדי שרינת והאדריכלית יראו ויעדכנו — חברו את האפליקציה לענן.</div><a class="btn sm" href="#/settings">איך מחברים</a></div>` : ''}
+  <section class="hero">
+    <div class="t"><div class="eyebrow">${esc(hebDate(td))}${S.settings.todayOverride?' · (תאריך בדיקה)':''}</div>
+      <h1>${greet}${me()?', '+esc(me().name):''}</h1>
+      <p>${me() ? (mineOpen.length ? `יש לך ${mineOpen.length} משימות פתוחות${mineLate?`, מתוכן <b style="color:var(--late)">${mineLate} באיחור</b>`:''}.` : 'אין לך משימות פתוחות כרגע 🎉') : `${open.length} משימות פתוחות בפרויקט.`}</p>
+    </div>
+    ${scenarioCtl()}
+  </section>
+  <section class="kpis">
+    <a class="kpi key" href="#/timeline"><div class="k">🔑 ימים למפתח</div><div class="v">${dKey}</div><div class="s">${fmtY(keyActive())} · ${S.settings.keyActual?'בפועל':'תכנון'}</div></a>
+    <a class="kpi" href="#/timeline"><div class="k">📦 ימים לפינוי הדירה</div><div class="v">${dEv==null?'—':dEv}</div><div class="s">${ev?fmtY(ev)+' · לא אומת':''}</div></a>
+    <a class="kpi" href="#/tasks">${ring(pct)}<div class="k">התקדמות כוללת</div><div class="v">${Math.round(pct*100)}%</div><div class="s">${done} מתוך ${ts.length} הושלמו</div></a>
+    <a class="kpi ${late.length?'alert':''}" href="#/tasks" data-a="filterStatus" data-v="באיחור"><div class="k">⏰ באיחור</div><div class="v">${late.length}</div><div class="s">יעד עבר ולא הושלם</div></a>
+    <a class="kpi" href="#/board"><div class="k">⛔ תקוע / ממתין</div><div class="v">${stuck.length}</div><div class="s">${ts.filter(t=>effStatus(t)==='בתהליך').length} בתהליך כרגע</div></a>
+  </section>
+  <div class="grid g-main">
+    <section class="card">
+      <div class="card-h"><h2>📅 על השולחן — 14 הימים הקרובים</h2>
+        ${me()?`<div class="seg"><button class="${!prefs.homeMine?'on':''}" data-a="homeMine" data-v="0">כולם</button><button class="${prefs.homeMine?'on':''}" data-a="homeMine" data-v="1">שלי</button></div>`:''}
+      </div>
+      <div class="list">${soon.length ? soon.slice(0,14).map(t=>taskRow(t)).join('') : '<div class="empty"><b>אין משימות לשבועיים הקרובים</b>אפשר לנשום 🙂</div>'}</div>
+      ${soon.length>14?`<div style="margin-top:8px"><a class="linkbtn" href="#/tasks">עוד ${soon.length-14} משימות ←</a></div>`:''}
+    </section>
+    <div class="grid" style="align-content:start">
+      <section class="card">
+        <div class="card-h"><h2>⚖️ החלטות שמחכות</h2><a href="#/decisions">הכל</a></div>
+        ${decs.length ? decs.map(d=>{ const t=S.tasks[d.taskId]; const s=decStatus(d); return `<div class="dec" data-a="openDecision" data-id="${esc(d.id)}"><span class="no">${esc(d.no)}</span><div class="tx">${esc(d.title)}<div class="meta xs faint">${t?esc(t.owner)+' · יעד '+fmt(tDue(t)):''}</div></div>${pill(s)}</div>`; }).join('') : '<div class="empty">כל ההחלטות התקבלו</div>'}
+      </section>
+      <section class="card">
+        <div class="card-h"><h2>🏁 אבני הדרך הבאות</h2><a href="#/timeline">ציר זמן</a></div>
+        ${mss.map(msRow).join('') || '<div class="empty">אין אבני דרך עתידיות</div>'}
+      </section>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <section class="card">
+      <div class="card-h"><h2>📊 התקדמות לפי שלב</h2></div>
+      ${phs.map(p=>{ const pt=ts.filter(t=>t.phase===p && t.status!=='בוטל'); const pp=pt.length?pt.reduce((a,t)=>a+progress(t),0)/pt.length:0; const dn_=pt.filter(t=>t.status==='הושלם').length; return `<a class="phase-row" href="#/tasks" data-a="filterPhase" data-v="${esc(p)}"><span>${esc(p)}</span><span class="bar"><i style="width:${pp*100}%"></i></span><span class="xs faint num">${dn_}/${pt.length}</span></a>`; }).join('')}
+    </section>
+    <div class="grid" style="align-content:start">
+      <section class="card">
+        <div class="card-h"><h2>🧩 התפלגות מצב</h2></div>
+        <div class="dist">${Object.keys(ST).filter(s=>counts[s]).map(s=>`<i class="s-${ST[s]}" style="background:var(--sc);width:${counts[s]/ts.length*100}%" title="${s}: ${counts[s]}"></i>`).join('')}</div>
+        <div class="legend">${Object.keys(ST).filter(s=>counts[s]).map(s=>`<span class="s-${ST[s]}">${s} · ${counts[s]}</span>`).join('')}</div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h2>💰 תקציב</h2><a href="#/shop">עיצוב ורכש</a></div>
+        ${budgetBlock(bud)}
+      </section>
+      <section class="card">
+        <div class="card-h"><h2>🗓️ ישיבה שבועית</h2></div>
+        <p class="muted small" style="margin:0 0 10px">סיכום אוטומטי: מה נסגר, מה באיחור, אילו החלטות נדרשות ומה בשבוע הקרוב. מוכן להעתקה לוואטסאפ.</p>
+        <button class="btn pri" data-a="weekly">${ic('clip')} הפקת סיכום לישיבה</button>
+      </section>
+    </div>
+  </div>
+  <button class="fab" data-a="newTask">${ic('plus')} משימה</button>`;
+}
+function msRow(m){
+  const d = msDate(m), n = dn(d)-dn(today()), [y,mo,da] = (d||'--').split('-');
+  return `<div class="ms ${m.id==='M6'?'key':''}" data-a="openMilestone" data-id="${esc(m.id)}"><div class="d"><b>${+da||''}</b><span>${HEB_MONTHS[+mo-1]||''}</span></div><div class="n">${esc(m.name)}<div class="xs faint">${esc(m.id)}${m.cond?' · '+esc(m.cond):''}</div></div><span class="xs ${n<0?'faint':n<=14?'':'faint'}" style="${n>=0&&n<=14?'color:var(--wait);font-weight:600':''}">${n<0?'עבר':relDays(n)}</span></div>`;
+}
+
+function filteredTasks(){
+  const f = prefs.taskFilter; const q = (f.q||'').trim().toLowerCase();
+  return visTasks().filter(t=>{
+    const s = effStatus(t);
+    if(f.hideDone && isClosed(t) && f.status!=='הושלם' && f.status!=='בוטל') return false;
+    if(f.status && s!==f.status) return false;
+    if(f.phase && t.phase!==f.phase) return false;
+    if(f.prio && t.prio!==f.prio) return false;
+    if(f.owner){ if(f.owner==='__me'){ if(!isMine(t)) return false; } else if(person(f.owner)){ if(!isMine(t,f.owner)) return false; } else if(!(t.owner||'').includes(f.owner)) return false; }
+    if(q){ const hay = [t.id,t.task,t.owner,t.phase,t.desc,t.docs,t.notes].join(' ').toLowerCase(); if(!hay.includes(q)) return false; }
+    return true;
+  });
+}
+function vTasks(){
+  const f = prefs.taskFilter, list = filteredTasks();
+  const sOpts = ['', ...Object.keys(ST)];
+  let body = '';
+  if(!list.length) body = `<div class="card"><div class="empty"><b>לא נמצאו משימות</b>נסו לשנות את הסינון${f.hideDone?' או להציג גם משימות שהושלמו':''}.</div></div>`;
+  else if(f.group==='phase'){
+    const groups = {}; list.forEach(t=> (groups[t.phase||'ללא שלב'] ||= []).push(t));
+    const order = phases().concat(Object.keys(groups).filter(g=>!phases().includes(g)));
+    body = order.filter(g=>groups[g]).map(g=>{
+      const all = visTasks().filter(t=>t.phase===g && t.status!=='בוטל'); const pp = all.length? all.reduce((a,t)=>a+progress(t),0)/all.length : 0;
+      return `<section class="group"><div class="group-h"><h3>${esc(g)}</h3><span class="bar"><i style="width:${pp*100}%"></i></span><span class="c">${groups[g].length}</span></div><div class="card"><div class="list">${groups[g].sort((a,b)=>(tDue(a)||'9').localeCompare(tDue(b)||'9')).map(t=>taskRow(t,{noPhase:true})).join('')}</div></div></section>`;
+    }).join('');
+  } else {
+    const sorted = list.slice().sort((a,b)=>(tDue(a)||'9').localeCompare(tDue(b)||'9'));
+    body = `<div class="card"><div class="list">${sorted.map(t=>taskRow(t)).join('')}</div></div>`;
+  }
+  const ownerOpts = [['','כל האחראים'], ...(me()?[['__me','👤 שלי']]:[]), ...people().map(p=>[p.id,p.name]), ['מודד','מודד'],['מהנדס','מהנדס'],['קבלן','קבלן'],['מובילים','מובילים'],['מיזוג','מיזוג'],['תמר','תמר (בוט)']];
+  const active = ['owner','phase','status','prio'].filter(k=>f[k]).length;
+  return `
+  <div class="page-head"><h1>משימות</h1><button class="btn pri" data-a="newTask">${ic('plus')} משימה חדשה</button><p>${list.length} משימות מוצגות · לחיצה על העיגול משנה סטטוס, לחיצה על השורה פותחת פרטים</p></div>
+  <div class="toolbar">
+    <label class="search"><span class="sr">חיפוש</span>${ic('search','sm')}<input class="inp" id="tq" type="search" placeholder="חיפוש משימה, אחראי, הערה…" value="${esc(f.q)}" data-tf="q"></label>
+  </div>
+  <div class="toolbar">
+    <select class="inp" data-tf="owner" aria-label="אחראי">${ownerOpts.map(([v,l])=>`<option value="${esc(v)}" ${f.owner===v?'selected':''}>${esc(l)}</option>`).join('')}</select>
+    <select class="inp" data-tf="phase" aria-label="שלב"><option value="">כל השלבים</option>${phases().map(p=>`<option ${f.phase===p?'selected':''}>${esc(p)}</option>`).join('')}</select>
+    <select class="inp" data-tf="status" aria-label="מצב">${sOpts.map(s=>`<option value="${s}" ${f.status===s?'selected':''}>${s||'כל המצבים'}</option>`).join('')}</select>
+    <select class="inp" data-tf="prio" aria-label="עדיפות"><option value="">כל העדיפויות</option>${PRIOS.map(p=>`<option ${f.prio===p?'selected':''}>${p}</option>`).join('')}</select>
+    <button class="chip ${f.hideDone?'on':''}" data-a="toggleHideDone">${f.hideDone?'✓ ':''}הסתר סגורות</button>
+    <div class="seg"><button class="${f.group==='phase'?'on':''}" data-a="taskGroup" data-v="phase">לפי שלב</button><button class="${f.group!=='phase'?'on':''}" data-a="taskGroup" data-v="due">לפי יעד</button></div>
+    ${active||f.q?`<button class="linkbtn" data-a="clearFilters">ניקוי סינון</button>`:''}
+  </div>
+  ${body}
+  <button class="fab" data-a="newTask">${ic('plus')} משימה</button>`;
+}
+
+function vBoard(){
+  let ts = visTasks();
+  const o = prefs.boardOwner;
+  if(o){ ts = ts.filter(t=> o==='__me' ? isMine(t) : isMine(t,o)); }
+  const cols = BOARD_COLS.map(s=>({s, items: ts.filter(t=>effStatus(t)===s).sort((a,b)=>(tDue(a)||'9').localeCompare(tDue(b)||'9'))}));
+  return `
+  <div class="page-head"><h1>לוח קנבן</h1><p>גררו כרטיס בין העמודות כדי לשנות סטטוס (במסך מגע — לחצו על הכרטיס). "באיחור" מחושב אוטומטית.</p></div>
+  <div class="chips" style="margin-bottom:14px">
+    <button class="chip ${!o?'on':''}" data-a="boardOwner" data-v="">כולם</button>
+    ${people().map(p=>`<button class="chip ${o===p.id?'on':''}" data-a="boardOwner" data-v="${esc(p.id)}">${esc(p.name)}</button>`).join('')}
+  </div>
+  <div class="board" data-keepscroll="board">
+    ${cols.map(c=>`<div class="col s-${ST[c.s]}" data-drop="${esc(c.s)}">
+      <div class="col-h"><span class="pill s-${ST[c.s]}">${esc(c.s)}</span><span class="n">${c.items.length}</span></div>
+      <div class="col-b">${c.items.map(t=>{ const dl=dueLabel(t); const ps=ownerPeople(t.owner); return `<div class="kcard s-${ST[effStatus(t)]}" draggable="true" data-drag="${esc(t.id)}" data-a="openTask" data-id="${esc(t.id)}"><div class="tt">${esc(t.task)}</div><div class="meta"><span class="prio ${PRIO_CLS[t.prio]||'p3'}"></span><span>${esc(t.id)}</span><span class="sp"></span>${ps.length?`<span class="avs">${ps.map(p=>avatar(p)).join('')}</span>`:`<span>${esc(trunc(t.owner,14))}</span>`}<span class="${dl.cls==='late'?'':''}" style="${dl.cls==='late'?'color:var(--late);font-weight:600':''}">${dl.txt}</span></div></div>`; }).join('') || '<div class="empty xs" style="padding:16px">—</div>'}</div>
+    </div>`).join('')}
+  </div>`;
+}
+function bindBoardDnD(){
+  if(route!=='board') return;
+  document.querySelectorAll('[data-drag]').forEach(el=>{
+    el.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', el.dataset.drag); el.classList.add('dragging'); });
+    el.addEventListener('dragend', ()=> el.classList.remove('dragging'));
+  });
+  document.querySelectorAll('[data-drop]').forEach(col=>{
+    col.addEventListener('dragover', e=>{ if(col.dataset.drop==='באיחור') return; e.preventDefault(); col.classList.add('over'); });
+    col.addEventListener('dragleave', ()=> col.classList.remove('over'));
+    col.addEventListener('drop', e=>{ e.preventDefault(); col.classList.remove('over'); const id=e.dataTransfer.getData('text/plain'); if(id) setTaskStatus(id, col.dataset.drop); });
+  });
+}
+
+function vTimeline(){
+  const PX = prefs.gZoom || 4, W = PX*7;
+  let ts = visTasks().filter(t=> tStart(t)||tDue(t));
+  if(prefs.gHideDone) ts = ts.filter(t=>!isClosed(t));
+  if(prefs.gPhase) ts = ts.filter(t=>t.phase===prefs.gPhase);
+  const dates = ts.flatMap(t=>[tStart(t),tDue(t)]).concat(msSorted().map(msDate)).filter(Boolean).concat([today(), keyActive()]);
+  const minD = dates.reduce((a,b)=>a<b?a:b), maxD = dates.reduce((a,b)=>a>b?a:b);
+  const d0n = dn(minD) - ((new Date(dn(minD)*864e5).getUTCDay())) - 7; // sunday before
+  const d1n = dn(maxD) + 21;
+  const width = (d1n - d0n) * PX;
+  const x = iso => (dn(iso)-d0n)*PX;
+  // scale
+  let months='', weeks='';
+  for(let n=d0n; n<=d1n; n++){ const iso=fromDn(n); const [y,m,d]=iso.split('-'); if(d==='01') months += `<div class="g-month" style="inset-inline-start:${(n-d0n)*PX}px">${HEB_MONTHS_FULL[+m-1]} ${y.slice(2)}</div>`; }
+  for(let n=d0n; n<=d1n; n+=7){ const iso=fromDn(n); weeks += `<div class="g-week" style="inset-inline-start:${(n-d0n)*PX + W/2}px">${+iso.slice(8)}</div>`; }
+  const groups = {}; ts.forEach(t=> (groups[t.phase||'ללא שלב'] ||= []).push(t));
+  const order = phases().concat(Object.keys(groups).filter(g=>!phases().includes(g))).filter(g=>groups[g]);
+  const row = t => { const s=tStart(t)||tDue(t), e=tDue(t)||s; const st=effStatus(t); const w=Math.max(PX,(dn(e)-dn(s)+1)*PX);
+    return `<div class="g-row"><div class="g-label" data-a="openTask" data-id="${esc(t.id)}" title="${esc(t.task)}"><span class="prio ${PRIO_CLS[t.prio]||'p3'}"></span><span class="x">${esc(t.task)}</span><span class="id">${esc(t.id)}</span></div><div class="g-track wk" style="width:${width}px;--wpx:${W}px;background-position-x:right ${-((0)%W)}px"><div class="g-bar s-${ST[st]}" style="inset-inline-start:${x(s)}px;width:${w}px" data-a="openTask" data-id="${esc(t.id)}" title="${esc(t.task)} · ${fmt(s)}–${fmt(e)} · ${esc(st)}"><i style="width:${progress(t)*100}%"></i></div></div></div>`; };
+  const msRowG = `<div class="g-row g-ph"><div class="g-label">🏁 אבני דרך</div><div class="g-track" style="width:${width}px">${msSorted().map(m=>{ const d=msDate(m); return d?`<span class="g-dia ${m.id==='M6'?'key':''} ${d<today()?'past':''}" style="inset-inline-start:${x(d)}px" title="${esc(m.id)} · ${esc(m.name)} · ${fmtY(d)}" data-a="openMilestone" data-id="${esc(m.id)}"></span>`:''; }).join('')}</div></div>`;
+  pendingAfter.push(()=>{ const w=$('.gwrap'); const tl=$('.g-line.today'); if(w && tl && !w.dataset.scrolled){ w.dataset.scrolled=1; const wr=w.getBoundingClientRect(), lr=tl.getBoundingClientRect(); w.scrollLeft += (lr.left - wr.left) - wr.width*0.65; } });
+  return `
+  <div class="page-head"><h1>ציר זמן</h1><p>גאנט שבועי לפי התרחיש הפעיל. קו כחול = היום, קו כתום = מפתח, ◆ = אבן דרך. לחיצה על פס פותחת את המשימה.</p></div>
+  <div class="toolbar">
+    ${scenarioCtl()}
+    <select class="inp" data-pref="gPhase" aria-label="שלב"><option value="">כל השלבים</option>${phases().map(p=>`<option ${prefs.gPhase===p?'selected':''}>${esc(p)}</option>`).join('')}</select>
+    <button class="chip ${prefs.gHideDone?'on':''}" data-a="gHideDone">${prefs.gHideDone?'✓ ':''}הסתר סגורות</button>
+    <div class="seg" aria-label="זום"><button class="${PX===3?'on':''}" data-a="gZoom" data-v="3">רחוק</button><button class="${PX===4?'on':''}" data-a="gZoom" data-v="4">רגיל</button><button class="${PX===7?'on':''}" data-a="gZoom" data-v="7">קרוב</button></div>
+  </div>
+  <div class="gwrap" data-keepscroll="gantt">
+    <div class="gantt" style="width:calc(var(--lw) + ${width}px)">
+      <div class="g-head"><div class="g-corner">משימה</div><div class="g-scale" style="width:${width}px">${months}${weeks}</div></div>
+      <div style="position:relative">
+        ${msRowG}
+        ${order.map(g=>`<div class="g-row g-ph"><div class="g-label">${esc(g)}</div><div class="g-track" style="width:${width}px"></div></div>${groups[g].map(row).join('')}`).join('')}
+        <div class="g-line today" style="inset-inline-start:calc(var(--lw) + ${x(today())}px)"><span>היום</span></div>
+        <div class="g-line key" style="inset-inline-start:calc(var(--lw) + ${x(keyActive())}px)"><span>🔑 מפתח</span></div>
+      </div>
+    </div>
+  </div>
+  <section class="card" style="margin-top:16px">
+    <div class="card-h"><h2>🏁 כל אבני הדרך</h2><span class="xs faint">לחיצה לעריכה</span></div>
+    <div class="grid g2" style="gap:0 24px">${msSorted().map(msRow).join('')}</div>
+  </section>`;
+}
+
+function budgetSummary(){
+  const items = Object.values(S.items).filter(i=>i.status!=='בוטל');
+  const itemsCommitted = items.filter(i=>ITEM_COMMITTED.includes(i.status)).reduce((a,i)=>a+(Number(i.price)||0)*(Number(i.qty)||1),0);
+  const itemsPlanned = items.filter(i=>!ITEM_COMMITTED.includes(i.status)).reduce((a,i)=>a+(Number(i.price)||0)*(Number(i.qty)||1),0);
+  const vendors = Object.values(S.contacts).filter(c=>c.status==='נבחר').reduce((a,c)=>{ const q = c.chosen ? c['q'+c.chosen] : lowQuote(c); return a + (Number(q)||0); },0);
+  const total = Number(S.settings.totalBudget)||0;
+  return {total, committed: itemsCommitted + vendors, itemsCommitted, vendors, planned: itemsPlanned};
+}
+function budgetBlock(b){
+  if(!b.total) return `<p class="muted small" style="margin:0 0 10px">התקציב הכולל עוד לא הוגדר (משימה T-001). אחרי ההחלטה — הזינו אותו בהגדרות ותראו כאן כמה כבר התחייבתם.</p><div class="small">מחויב עד כה: <b>${money(b.committed)}</b> · בתכנון: ${money(b.planned)}</div><div style="margin-top:10px"><a class="btn sm" href="#/settings">הגדרת תקציב</a></div>`;
+  const c = Math.min(1,b.committed/b.total), p = Math.min(1-c, b.planned/b.total);
+  return `<div class="budget"><div><div class="xs faint">מחויב מתוך ${money(b.total)}</div><div class="big">${money(b.committed)}</div></div>
+    <div class="bbar" title="מחויב / בתכנון"><i style="width:${c*100}%;background:var(--accent)"></i><i style="width:${p*100}%;background:var(--accent-soft)"></i></div></div>
+    <div class="legend" style="margin-top:8px"><span style="--sc:var(--accent)">ספקים שנבחרו ${money(b.vendors)}</span><span style="--sc:var(--accent)">פריטים מאושרים ${money(b.itemsCommitted)}</span><span style="--sc:var(--accent-soft)">בתכנון ${money(b.planned)}</span><span style="--sc:var(--sunk)">יתרה ${money(b.total-b.committed)}</span></div>`;
+}
+function vShop(){
+  const all = Object.values(S.items);
+  const room = prefs.shopRoom, st = prefs.shopStatus;
+  let items = all.filter(i=> (!room || i.room===room) && (!st || i.status===st));
+  items.sort((a,b)=> ITEM_ST.indexOf(a.status)-ITEM_ST.indexOf(b.status) || (a.room||'').localeCompare(b.room||''));
+  const rooms = ROOMS.concat([...new Set(all.map(i=>i.room).filter(r=>r && !ROOMS.includes(r)))]);
+  const roomTotal = r => all.filter(i=>i.room===r && i.status!=='בוטל').reduce((a,i)=>a+(Number(i.price)||0)*(Number(i.qty)||1),0);
+  const rb = room ? Number((S.settings.roomBudgets||{})[room])||0 : 0;
+  const pendingMe = me() ? all.filter(i=> i.status==='לבחירה' && !(i.approvals||{})[prefs.me]).length : 0;
+  return `
+  <div class="page-head"><h1>עיצוב ורכש</h1><button class="btn pri" data-a="newItem">${ic('plus')} פריט חדש</button><p>רשימת הלבשת הבית לפי חדרים: רעיונות, פריטים לבחירה ואישורים, מה הוזמן ומה סופק. כל אחד מסמן 👍/👎 — האדריכלית יכולה להציע פריטים.</p></div>
+  ${pendingMe?`<div class="banner" style="background:var(--prog-bg);border-color:transparent">👀<div><b>${pendingMe} פריטים מחכים לחוות דעתך</b>סמנו 👍 או 👎 בכרטיס.</div><button class="btn sm" data-a="shopStatus" data-v="לבחירה">הצג</button></div>`:''}
+  <section class="card" style="margin-bottom:14px">${room ? `<div class="budget"><div><div class="xs faint">${esc(room)}${rb?` · תקציב ${money(rb)}`:''}</div><div class="big">${money(roomTotal(room))}</div></div>${rb?`<div class="bbar"><i style="width:${Math.min(100,roomTotal(room)/rb*100)}%;background:${roomTotal(room)>rb?'var(--late)':'var(--olive)'}"></i></div>`:`<span class="muted small">אפשר להגדיר תקציב לחדר בהגדרות</span>`}</div>` : budgetBlock(budgetSummary())}</section>
+  <div class="chips" style="margin-bottom:10px">
+    <button class="chip ${!room?'on':''}" data-a="shopRoom" data-v="">כל החדרים <span class="c">${all.length}</span></button>
+    ${rooms.map(r=>{ const n=all.filter(i=>i.room===r).length; return `<button class="chip ${room===r?'on':''}" data-a="shopRoom" data-v="${esc(r)}">${esc(r)}${n?` <span class="c">${n}</span>`:''}</button>`; }).join('')}
+  </div>
+  <div class="chips" style="margin-bottom:16px">
+    <button class="chip ${!st?'on':''}" data-a="shopStatus" data-v="">כל המצבים</button>
+    ${ITEM_ST.map(s=>`<button class="chip ${st===s?'on':''}" data-a="shopStatus" data-v="${s}">${s} <span class="c">${all.filter(i=>i.status===s).length}</span></button>`).join('')}
+  </div>
+  ${items.length ? `<div class="items">${items.map(itemCard).join('')}</div>` : `<div class="card"><div class="empty"><b>אין עדיין פריטים כאן</b>הוסיפו פריט עם קישור ותמונה — למשל ספה שראיתם, אריח, או גוף תאורה.</div><div style="text-align:center;padding-bottom:16px"><button class="btn pri" data-a="newItem">${ic('plus')} פריט חדש</button></div></div>`}
+  <button class="fab" data-a="newItem">${ic('plus')} פריט</button>`;
+}
+function itemCard(i){
+  const img = safeUrl(i.img);
+  const ap = i.approvals||{};
+  const total = (Number(i.price)||0)*(Number(i.qty)||1);
+  const my = ap[prefs.me];
+  return `<article class="item" data-a="openItem" data-id="${esc(i.id)}">
+    <div class="ph">${img?`<img src="${esc(img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''}${CAT_EMO[i.cat]||'📦'}<span class="pill s-${ITEM_ST_CLS[i.status]||'todo'}">${esc(i.status)}</span></div>
+    <div class="bd"><div class="nm">${esc(i.name)}</div><div class="rm">${esc(i.room||'')}${i.vendor?' · '+esc(i.vendor):''}</div>
+      <div class="pr">${i.price!=null&&i.price!==''?money(total)+(Number(i.qty)>1?` <span class="xs faint">(${i.qty}×${money(i.price)})</span>`:''):'<span class="faint small">ללא מחיר</span>'}</div>
+      <div class="ap">${people().filter(p=>ap[p.id]).map(p=>`<span class="vote ${ap[p.id]==='yes'?'yes':'no'}">${avatar(p)}${ap[p.id]==='yes'?'👍':'👎'}</span>`).join('')}
+        ${me()?`<span class="vbtns"><button class="y ${my==='yes'?'on':''}" data-a="vote" data-id="${esc(i.id)}" data-v="yes" aria-label="בעד">👍</button><button class="n ${my==='no'?'on':''}" data-a="vote" data-id="${esc(i.id)}" data-v="no" aria-label="נגד">👎</button></span>`:''}
+      </div>
+    </div>
+  </article>`;
+}
+
+function vDecisions(){
+  const ds = decisionsSorted();
+  const open = ds.filter(d=>decStatus(d)!=='הושלם'), closed = ds.filter(d=>decStatus(d)==='הושלם');
+  const card = d => { const t=S.tasks[d.taskId]; const s=decStatus(d); return `<article class="card" style="cursor:pointer" data-a="openDecision" data-id="${esc(d.id)}">
+    <div style="display:flex;gap:10px;align-items:flex-start"><span class="no" style="width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--accent-2);display:grid;place-items:center;font-weight:700;flex:none">${esc(d.no)}</span>
+    <div style="flex:1;min-width:0"><h3 style="font-size:15.5px">${esc(d.title)}</h3>${d.why?`<div class="small muted" style="margin-top:4px">למה עכשיו: ${esc(d.why)}</div>`:''}
+    <div class="meta small faint" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${pill(s)}${t?`<span>${esc(t.owner)}</span><span>· יעד ${fmt(tDue(t))}</span><span class="tag">${esc(t.id)}</span>`:''}${d.dep?`<span>· ${esc(d.dep)}</span>`:''}</div>
+    ${d.outcome?`<div style="margin-top:10px;padding:8px 12px;border-radius:10px;background:var(--done-bg);font-size:14px"><b style="color:var(--done)">✓ הוחלט${d.decidedAt?' ב-'+fmtY(d.decidedAt):''}:</b> ${esc(d.outcome)}</div>`:''}
+    </div></div></article>`; };
+  return `
+  <div class="page-head"><h1>החלטות</h1><button class="btn" data-a="newDecision">${ic('plus')} החלטה</button><p>10 ההחלטות הקריטיות + שער A/B. המצב והיעד נמשכים מהמשימה המקושרת. כשמחליטים — מתעדים את ההחלטה כאן, כך שתמיד יודעים מה סוכם ומתי.</p></div>
+  <div class="grid g2">${open.map(card).join('')}</div>
+  ${closed.length?`<h2 style="margin:24px 0 12px">✓ החלטות שהתקבלו</h2><div class="grid g2">${closed.map(card).join('')}</div>`:''}`;
+}
+
+const lowQuote = c => { const q=[c.q1,c.q2,c.q3].map(Number).filter(n=>n>0); return q.length?Math.min(...q):null; };
+function vVendors(){
+  const cs = Object.values(S.contacts).sort((a,b)=>(a.ord??99)-(b.ord??99));
+  return `
+  <div class="page-head"><h1>ספקים והצעות מחיר</h1><button class="btn pri" data-a="newContact">${ic('plus')} תחום / ספק</button><p>כלל: 3 הצעות לכל תחום · אין רכישה, הזמנה או פנייה לספק ללא אישור מפורש של אריאל.</p></div>
+  <div class="grid g3">${cs.map(c=>{ const low=lowQuote(c); const n=[c.q1,c.q2,c.q3].filter(q=>Number(q)>0).length; const tel=String(c.phone||'').replace(/[^\d+]/g,''); const wa = tel ? tel.replace(/^0/,'972').replace(/^\+/,'') : '';
+    return `<article class="card vend" data-a="openContact" data-id="${esc(c.id)}">
+      <div class="top"><h3>${esc(c.domain)}</h3><span class="pill s-${CONTACT_ST_CLS[c.status]||'todo'}">${esc(c.status)}</span></div>
+      <div class="small ${c.name||c.company?'':'faint'}">${c.name||c.company ? esc([c.name,c.company].filter(Boolean).join(' · ')) : 'עוד לא הוזן איש קשר'}</div>
+      <div class="quotes">${[1,2,3].map(k=>{ const q=Number(c['q'+k]); return `<div class="quote ${q>0?'has':''} ${q>0&&q===low&&n>1?'low':''} ${c.chosen==k?'chosen':''}">${k}<b>${q>0?money(q):'—'}</b></div>`; }).join('')}</div>
+      <div class="contact-l">${tel?`<a class="btn sm" href="tel:${esc(tel)}" data-stop>${ic('phone','sm')} <span class="ltr">${esc(c.phone)}</span></a><a class="btn sm" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener" data-stop>וואטסאפ</a>`:''}${c.email?`<a class="btn sm icon" href="mailto:${esc(c.email)}" data-stop aria-label="מייל">${ic('mail','sm')}</a>`:''}<span class="xs faint" style="margin-inline-start:auto;align-self:center">${n}/3 הצעות${c.taskId?' · '+esc(c.taskId):''}</span></div>
+    </article>`; }).join('')}</div>`;
+}
+
+function vActivity(){
+  const acts = Object.values(S.activity).sort((a,b)=>b.ts-a.ts).slice(0,200);
+  let lastDay='', html='';
+  acts.forEach(a=>{ const d=new Date(a.ts); const day=d.toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long'}); if(day!==lastDay){ if(lastDay) html+='</div>'; html+=`<div class="feed-day">${day}</div><div class="card" style="padding:4px 14px">`; lastDay=day; }
+    const p = person(a.who) || {id:a.who||'x', name:a.whoName||'?'};
+    const t = new Date(a.ts); html += `<div class="feed" ${a.ref?`data-a="openRef" data-col="${esc(a.ref.col)}" data-id="${esc(a.ref.id)}" style="cursor:pointer"`:''}>${avatar(p)}<div class="tx"><b>${esc(a.whoName||p.name)}</b> ${esc(a.text)}</div><span class="tm">${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}</span></div>`; });
+  if(lastDay) html+='</div>';
+  return `<div class="page-head"><h1>מה חדש</h1><p>כל השינויים בפרויקט — מי עשה מה ומתי.</p></div>${html || '<div class="card"><div class="empty"><b>עוד אין פעילות</b>שינויים שתעשו יופיעו כאן.</div></div>'}`;
+}
+
+function vMore(){
+  const late = visTasks().filter(t=>effStatus(t)==='באיחור').length;
+  return `<div class="page-head"><h1>עוד</h1></div>
+  <div class="more">
+    <a href="#/board">${ic('board')}לוח קנבן<span>גרירת משימות בין סטטוסים</span></a>
+    <a href="#/decisions">${ic('dec')}החלטות<span>${decisionsSorted().filter(d=>decStatus(d)!=='הושלם').length} פתוחות</span></a>
+    <a href="#/vendors">${ic('users')}ספקים והצעות<span>3 הצעות לכל תחום</span></a>
+    <a href="#/activity">${ic('act')}מה חדש<span>יומן שינויים</span></a>
+    <a href="#/settings">${ic('set')}הגדרות<span>תרחיש, תקציב, שיתוף, ייצוא</span></a>
+    <a href="#/tasks" data-a="filterStatus" data-v="באיחור">${ic('time')}באיחור<span>${late} משימות</span></a>
+  </div>`;
+}
+
+function vSettings(){
+  const st = S.settings;
+  return `<div class="page-head"><h1>הגדרות</h1></div>
+  <div class="grid g2">
+  <section class="card">
+    <div class="card-h"><h2>🎛️ תרחיש ותאריכים</h2></div>
+    <div class="set-row"><div class="l"><b>תרחיש פעיל</b><span>A — מפתח 1.12.2026, גרים בבית בזמן השיפוץ · B — מפתח 5.1.2027, מגורי ביניים + אחסון</span></div>
+      <div class="seg"><button class="${scenario()==='A'?'on':''}" data-a="setScenario" data-v="A">A</button><button class="${scenario()==='B'?'on':''}" data-a="setScenario" data-v="B">B</button></div></div>
+    <div class="set-row"><div class="l"><b>🔑 מפתח בפועל</b><span>כשהתאריך נקבע — כל המשימות הצמודות למפתח (K) ואבני הדרך זזות אוטומטית. ריק = לפי התרחיש.</span></div>
+      <input class="inp" type="date" style="width:auto" value="${esc(st.keyActual||'')}" data-set="keyActual"></div>
+    <div class="set-row"><div class="l"><b>📅 "היום" לבדיקה</b><span>לראות איך הלוח ייראה בתאריך אחר. ריק = היום האמיתי.</span></div>
+      <input class="inp" type="date" style="width:auto" value="${esc(st.todayOverride||'')}" data-set="todayOverride"></div>
+    <div class="set-row"><div class="l"><b>משימות של התרחיש השני</b><span>במצב רגיל מוסתרות משימות B כשתרחיש A פעיל (ולהפך).</span></div>
+      <button class="chip ${prefs.showOther?'on':''}" data-a="toggleOther">${prefs.showOther?'✓ מוצגות':'מוסתרות'}</button></div>
+  </section>
+  <section class="card">
+    <div class="card-h"><h2>💰 תקציב</h2></div>
+    <div class="set-row"><div class="l"><b>תקציב כולל (₪)</b><span>לפי החלטה #1 (T-001)</span></div><input class="inp num" inputmode="numeric" style="width:160px" value="${st.totalBudget??''}" data-set="totalBudget" data-num placeholder="לא הוגדר"></div>
+    <details class="sec" style="border:0;padding:0"><summary>תקציב לפי חדר (לעיצוב ורכש)</summary>
+      <div class="fgrid">${ROOMS.map(r=>`<label class="field"><span>${esc(r)}</span><input class="inp num" inputmode="numeric" value="${(st.roomBudgets||{})[r]??''}" data-set="roomBudgets.${esc(r)}" data-num placeholder="—"></label>`).join('')}</div>
+    </details>
+  </section>
+  <section class="card">
+    <div class="card-h"><h2>👥 משתתפים</h2></div>
+    <p class="small muted" style="margin:0 0 8px">"מילת זיהוי" משייכת משימות לפי עמודת האחראי (למשל "אדריכל" יתאים גם ל"אדריכל/אריאל"). המייל משמש לזיהוי אוטומטי בהתחברות.</p>
+    ${people().map((p,ix)=>`<div class="set-row">${avatar(p,'lg')}<div class="fgrid" style="flex:1"><label class="field"><span>שם</span><input class="inp" value="${esc(p.name)}" data-person="${ix}" data-pf="name"></label><label class="field"><span>מילת זיהוי</span><input class="inp" value="${esc(p.kw||'')}" data-person="${ix}" data-pf="kw"></label><label class="field"><span>מייל Google</span><input class="inp ltr" style="display:block" dir="ltr" type="email" value="${esc(p.email||'')}" data-person="${ix}" data-pf="email"></label><label class="field"><span>פנייה</span><select class="inp" data-person="${ix}" data-pf="g"><option value="m" ${p.g!=='f'?'selected':''}>זכר</option><option value="f" ${p.g==='f'?'selected':''}>נקבה</option></select></label></div></div>`).join('')}
+    <div class="set-row"><div class="l"><b>אני</b><span>${me()?esc(me().name):'לא נבחר'}${currentUser?` · מחובר/ת כ-<span class="ltr">${esc(currentUser.email)}</span>`:''}</span></div><button class="btn sm" data-a="pickMe">החלפה</button>${backend===FirebaseBackend?`<button class="btn sm" data-a="signOut">התנתקות</button>`:''}</div>
+  </section>
+  <section class="card">
+    <div class="card-h"><h2>☁️ שיתוף וסנכרון</h2>${syncPill()}</div>
+    ${backend===LocalBackend ? `<p class="small" style="margin:0 0 10px">כרגע האפליקציה במצב <b>מקומי</b>: הנתונים שמורים רק בדפדפן הזה. כדי לשתף עם רינת והאדריכלית בזמן אמת:</p>
+      <ol class="small" style="margin:0 0 12px;padding-inline-start:20px;line-height:1.8"><li>מעלים את <span class="ltr">index.html</span> ל-GitHub ומפעילים GitHub Pages.</li><li>פותחים פרויקט חינמי ב-Firebase, מפעילים התחברות Google ו-Firestore.</li><li>מדביקים את ה-config בראש הקובץ (<span class="ltr">FIREBASE_CONFIG</span>) ואת כללי האבטחה עם המיילים המורשים.</li></ol>
+      <p class="small muted" style="margin:0">ההוראות המלאות בקובץ <span class="ltr">README.md</span> שמצורף. הנתונים שהזנתם כאן אפשר להעביר לענן בעזרת "גיבוי JSON" ← "שחזור".</p>`
+      : `<p class="small" style="margin:0">מחובר לענן · כל שינוי מסתנכרן מיד לכל המשתמשים, וגם עובד בלי חיבור ומסתנכרן כשהרשת חוזרת.</p>`}
+  </section>
+  <section class="card">
+    <div class="card-h"><h2>📤 ייצוא, גיבוי ושחזור</h2></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" data-a="exportXlsx">${ic('dl','sm')} ייצוא לאקסל</button>
+      <button class="btn" data-a="exportJson">${ic('dl','sm')} גיבוי JSON</button>
+      <label class="btn">${ic('up','sm')} שחזור מגיבוי<input type="file" accept=".json,application/json" hidden data-file="json"></label>
+      <label class="btn">${ic('up','sm')} עדכון משימות מאקסל<input type="file" accept=".xlsx" hidden data-file="xlsx"></label>
+      <button class="btn" data-a="print">הדפסה</button>
+    </div>
+    <p class="xs faint" style="margin:10px 0 0">"עדכון משימות מאקסל" קורא את לשונית "משימות" בקובץ במבנה המקורי ומעדכן/מוסיף משימות לפי ID.</p>
+    ${backend===LocalBackend?`<div style="margin-top:12px"><button class="btn sm danger" data-a="resetLocal">איפוס לנתוני האקסל המקוריים</button></div>`:''}
+  </section>
+  </div>`;
+}
+
+/* ============================ drawers ============================ */
+let drawer = null; // {col,id}
+function openDrawer(html, col, id){
+  drawer = {col,id};
+  const d = $('#drawer'); d.innerHTML = html; d.classList.add('on'); $('#scrim').classList.add('on');
+  document.body.style.overflow='hidden';
+  d.dataset.col = col; d.dataset.id = id;
+  setTimeout(()=>{ const f=d.querySelector('[data-autofocus]'); if(f){ f.focus(); if(f.select) f.select(); } }, 260);
+}
+function closeDrawer(){
+  if(!drawer) return;
+  const d=$('#drawer'); d.classList.remove('on'); $('#scrim').classList.remove('on'); document.body.style.overflow='';
+  drawer=null;
+  if(/^#\/[^/]+\/.+/.test(location.hash)) history.replaceState(null,'',`#/${route}`);
+}
+function refreshDrawer(col){
+  if(!drawer || (col && col!==drawer.col)) return;
+  const doc = S[drawer.col]?.[drawer.id]; if(!doc) return;
+  const c = $('#cmts'); if(c) c.innerHTML = commentsHtml(doc);
+}
+function commentsHtml(doc){
+  const cs = (doc.comments||[]).slice().sort((a,b)=>a.ts-b.ts);
+  return cs.length ? cs.map(c=>{ const p=person(c.who)||{id:c.who||'x',name:c.whoName||'?'}; return `<div class="cmt">${avatar(p)}<div class="bb"><div class="w">${esc(c.whoName||p.name)} · ${timeAgo(c.ts)}</div>${esc(c.text)}</div></div>`; }).join('') : '<div class="xs faint">אין עדיין הערות. כתבו שאלה לרינת או לאדריכלית…</div>';
+}
+const commentBox = (col,id) => `<section class="sec"><h3>💬 שיחה</h3><div class="cmts" id="cmts">${commentsHtml(S[col][id]||{})}</div>
+  <div class="cmt-in" style="margin-top:10px"><textarea class="inp" id="cmtText" placeholder="כתיבת הערה…" rows="1"></textarea><button class="btn pri icon" data-a="addComment" aria-label="שליחה">${ic('send')}</button></div></section>`;
+const drHead = (label, extra='') => `<div class="dr-h"><span class="ttl" id="drTitle">${label}</span>${extra}<span class="saved" id="saved">✓ נשמר</span><button class="btn ghost icon" data-a="closeDrawer" aria-label="סגירה">${ic('x')}</button></div>`;
+function flashSaved(){ const s=$('#saved'); if(s){ s.classList.add('on'); clearTimeout(flashSaved.t); flashSaved.t=setTimeout(()=>s.classList.remove('on'),1400); } }
+
+function taskDrawer(id){
+  const t = S.tasks[id]; if(!t){ toast('המשימה לא נמצאה'); return; }
+  const s = effStatus(t);
+  const deps = String(t.deps||'').split(/[,\s]+/).filter(Boolean);
+  const blocks = allTasks().filter(x=> String(x.deps||'').split(/[,\s]+/).includes(t.id));
+  const owners = [...new Set(allTasks().map(x=>x.owner).filter(Boolean))];
+  const depRow = x => x ? `<div class="dep" data-a="openTask" data-id="${esc(x.id)}">${pill(effStatus(x))}<span class="x">${esc(x.task)}</span><span class="xs faint">${esc(x.id)} · ${fmt(tDue(x))}</span></div>` : '';
+  const html = `${drHead(`${esc(t.id)} · ${esc(t.phase||'')}`, `<button class="btn ghost icon" data-a="shareTask" data-id="${esc(t.id)}" aria-label="שיתוף">${ic('share')}</button>`)}
+  <div class="dr-b">
+    <textarea class="title-inp" rows="2" data-f="task" aria-label="שם המשימה" ${t._new?'data-autofocus':''}>${esc(t.task)}</textarea>
+    <div><div class="stgrid">${SETTABLE.map(x=>`<button class="s-${ST[x]} ${t.status===x||(!t.status&&x==='לא התחיל')?'on':''}" data-a="drStatus" data-v="${x}">${x}</button>`).join('')}</div>
+      ${s==='באיחור'?`<div class="small" style="color:var(--late);margin-top:8px">⏰ באיחור — היעד (${fmtY(tDue(t))}) עבר והמשימה לא הושלמה</div>`:''}</div>
+    <div class="fgrid">
+      <label class="field"><span>אחראי</span><input class="inp" list="ownersList" value="${esc(t.owner)}" data-f="owner"><datalist id="ownersList">${owners.map(o=>`<option value="${esc(o)}">`).join('')}</datalist></label>
+      <label class="field"><span>עדיפות</span><select class="inp" data-f="prio">${PRIOS.map(p=>`<option ${t.prio===p?'selected':''}>${p}</option>`).join('')}</select></label>
+      <label class="field"><span>שלב</span><input class="inp" list="phaseList" value="${esc(t.phase)}" data-f="phase"><datalist id="phaseList">${phases().map(p=>`<option value="${esc(p)}">`).join('')}</datalist></label>
+      <label class="field"><span>התקדמות % (ריק = לפי סטטוס)</span><input class="inp num" type="number" min="0" max="100" step="5" inputmode="numeric" value="${t.pm??''}" placeholder="${Math.round(progress(t)*100)}" data-f="pm" data-num></label>
+    </div>
+    <section class="sec"><h3>📅 תאריכים</h3>
+      <div class="active-dates">▶ <b>${fmtY(tStart(t))}</b> ← 🎯 <b>${fmtY(tDue(t))}</b><span class="xs faint" style="margin-inline-start:auto">פעיל לפי ${S.settings.keyActual&&t.mode==='K'?'מפתח בפועל':'תרחיש '+scenario()}</span></div>
+      <div class="fgrid" style="margin-top:12px">
+        <label class="field full"><span>סוג תזמון</span><select class="inp" data-f="mode"><option value="F" ${t.mode!=='K'?'selected':''}>F · תאריך קבוע</option><option value="K" ${t.mode==='K'?'selected':''}>K · צמוד למועד המפתח</option></select></label>
+        <label class="field"><span>התחלה · תרחיש A</span><input class="inp" type="date" value="${esc(t.sA)}" data-f="sA"></label>
+        <label class="field"><span>יעד · תרחיש A</span><input class="inp" type="date" value="${esc(t.dA)}" data-f="dA"></label>
+        <label class="field"><span>התחלה · תרחיש B</span><input class="inp" type="date" value="${esc(t.sB)}" data-f="sB"></label>
+        <label class="field"><span>יעד · תרחיש B</span><input class="inp" type="date" value="${esc(t.dB)}" data-f="dB"></label>
+      </div>
+    </section>
+    <section class="sec"><h3>🔗 תלויות</h3>
+      <label class="field"><span>תלוי ב- (מזהים מופרדים בפסיק, למשל T-004,T-010)</span><input class="inp ltr" style="display:block;text-align:right" dir="ltr" value="${esc(t.deps)}" data-f="deps"></label>
+      ${deps.length?`<div class="deps" style="margin-top:8px">${deps.map(d=>depRow(S.tasks[d]) || `<div class="dep faint">${esc(d)} — לא נמצא</div>`).join('')}</div>`:''}
+      ${blocks.length?`<div class="xs faint" style="margin:12px 0 6px">ממתינות למשימה הזו:</div><div class="deps">${blocks.map(depRow).join('')}</div>`:''}
+    </section>
+    <section class="sec"><h3>📝 פרטים</h3>
+      <div style="display:flex;flex-direction:column;gap:12px">
+      <label class="field"><span>תיאור</span><textarea class="inp" data-f="desc">${esc(t.desc)}</textarea></label>
+      <label class="field"><span>מידע / מסמכים נדרשים</span><textarea class="inp" data-f="docs">${esc(t.docs)}</textarea></label>
+      <label class="field"><span>הערות / הנחות</span><textarea class="inp" data-f="notes">${esc(t.notes)}</textarea></label>
+      </div>
+    </section>
+    ${commentBox('tasks',id)}
+    ${t.updatedAt?`<div class="xs faint">עודכן ${timeAgo(t.updatedAt)}${person(t.updatedBy)?' ע״י '+esc(person(t.updatedBy).name):''}</div>`:''}
+  </div>
+  <div class="dr-f"><button class="btn danger sm" data-a="delete">${ic('trash','sm')} מחיקה</button><span style="flex:1"></span><button class="btn pri" data-a="closeDrawer">סיום</button></div>`;
+  if(t._new){ delete t._new; }
+  openDrawer(html, 'tasks', id);
+}
+
+function itemDrawer(id){
+  const i = S.items[id]; if(!i) return;
+  const rooms = ROOMS.concat([...new Set(Object.values(S.items).map(x=>x.room).filter(r=>r&&!ROOMS.includes(r)))]);
+  const ap = i.approvals||{};
+  const img = safeUrl(i.img), link = safeUrl(i.link);
+  const html = `${drHead('פריט · '+esc(i.room||''))}
+  <div class="dr-b">
+    ${img?`<img src="${esc(img)}" alt="" referrerpolicy="no-referrer" style="width:100%;max-height:260px;object-fit:cover;border-radius:12px;background:var(--sunk)" onerror="this.remove()">`:''}
+    <textarea class="title-inp" rows="1" data-f="name" aria-label="שם הפריט" ${i._new?'data-autofocus':''}>${esc(i.name)}</textarea>
+    <div><div class="stgrid">${ITEM_ST.map(x=>`<button class="s-${ITEM_ST_CLS[x]} ${i.status===x?'on':''}" data-a="drItemStatus" data-v="${x}">${x}</button>`).join('')}</div></div>
+    <section><h3 class="xs faint" style="margin-bottom:8px">חוות דעת</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${people().map(p=>`<span class="vote ${ap[p.id]==='yes'?'yes':ap[p.id]==='no'?'no':''}">${avatar(p)} ${esc(p.name)} ${ap[p.id]==='yes'?'👍':ap[p.id]==='no'?'👎':'· טרם'}</span>`).join('')}
+      ${me()?`<span class="vbtns"><button class="y ${ap[prefs.me]==='yes'?'on':''}" data-a="vote" data-id="${esc(i.id)}" data-v="yes" aria-label="בעד">👍</button><button class="n ${ap[prefs.me]==='no'?'on':''}" data-a="vote" data-id="${esc(i.id)}" data-v="no" aria-label="נגד">👎</button></span>`:''}</div></section>
+    <div class="fgrid">
+      <label class="field"><span>חדר</span><input class="inp" list="roomList" value="${esc(i.room)}" data-f="room"><datalist id="roomList">${rooms.map(r=>`<option value="${esc(r)}">`).join('')}</datalist></label>
+      <label class="field"><span>קטגוריה</span><select class="inp" data-f="cat">${CATS.map(c=>`<option ${i.cat===c?'selected':''}>${c}</option>`).join('')}</select></label>
+      <label class="field"><span>מחיר ליחידה (₪)</span><input class="inp num" inputmode="numeric" value="${i.price??''}" data-f="price" data-num></label>
+      <label class="field"><span>כמות</span><input class="inp num" type="number" min="1" inputmode="numeric" value="${i.qty??1}" data-f="qty" data-num></label>
+      <label class="field"><span>ספק / חנות</span><input class="inp" value="${esc(i.vendor)}" data-f="vendor"></label>
+      <label class="field"><span>משימה קשורה</span><select class="inp" data-f="taskId"><option value="">—</option>${allTasks().map(t=>`<option value="${esc(t.id)}" ${i.taskId===t.id?'selected':''}>${esc(t.id)} · ${esc(trunc(t.task,34))}</option>`).join('')}</select></label>
+      <label class="field full"><span>קישור למוצר</span><input class="inp" dir="ltr" type="url" inputmode="url" value="${esc(i.link)}" data-f="link" placeholder="https://"></label>
+      ${link?`<a class="btn sm full" href="${esc(link)}" target="_blank" rel="noopener">${ic('out','sm')} פתיחת הקישור</a>`:''}
+      <label class="field full"><span>קישור לתמונה (העתיקו "כתובת תמונה")</span><input class="inp" dir="ltr" type="url" inputmode="url" value="${esc(i.img)}" data-f="img" placeholder="https://…jpg"></label>
+      <label class="field full"><span>הערות (מידות, צבע, זמן אספקה…)</span><textarea class="inp" data-f="notes">${esc(i.notes)}</textarea></label>
+    </div>
+    ${commentBox('items',id)}
+  </div>
+  <div class="dr-f"><button class="btn danger sm" data-a="delete">${ic('trash','sm')} מחיקה</button><span style="flex:1"></span><button class="btn pri" data-a="closeDrawer">סיום</button></div>`;
+  if(i._new) delete i._new;
+  openDrawer(html,'items',id);
+}
+
+function contactDrawer(id){
+  const c = S.contacts[id]; if(!c) return;
+  const low = lowQuote(c);
+  const html = `${drHead('ספק / תחום')}
+  <div class="dr-b">
+    <textarea class="title-inp" rows="1" data-f="domain" aria-label="תחום" ${c._new?'data-autofocus':''}>${esc(c.domain)}</textarea>
+    <div class="stgrid">${CONTACT_ST.map(x=>`<button class="s-${CONTACT_ST_CLS[x]} ${c.status===x?'on':''}" data-a="drContactStatus" data-v="${x}">${x}</button>`).join('')}</div>
+    <div class="fgrid">
+      <label class="field"><span>שם איש קשר</span><input class="inp" value="${esc(c.name)}" data-f="name"></label>
+      <label class="field"><span>חברה</span><input class="inp" value="${esc(c.company)}" data-f="company"></label>
+      <label class="field"><span>טלפון</span><input class="inp" dir="ltr" type="tel" inputmode="tel" value="${esc(c.phone)}" data-f="phone"></label>
+      <label class="field"><span>אימייל</span><input class="inp" dir="ltr" type="email" value="${esc(c.email)}" data-f="email"></label>
+    </div>
+    <section class="sec"><h3>💵 הצעות מחיר (₪)</h3>
+      <div class="fgrid" style="grid-template-columns:1fr 1fr 1fr">${[1,2,3].map(k=>`<label class="field"><span>הצעה ${k}${Number(c['q'+k])===low&&low?' · הנמוכה':''}</span><input class="inp num" inputmode="numeric" value="${c['q'+k]??''}" data-f="q${k}" data-num></label>`).join('')}</div>
+      <label class="field" style="margin-top:12px"><span>ההצעה שנבחרה</span><select class="inp" data-f="chosen" data-num><option value="">טרם נבחרה</option>${[1,2,3].map(k=>`<option value="${k}" ${c.chosen==k?'selected':''}>הצעה ${k}${c['q'+k]?' · '+money(c['q'+k]):''}</option>`).join('')}</select></label>
+    </section>
+    <div class="fgrid">
+      <label class="field full"><span>משימה קשורה</span><select class="inp" data-f="taskId"><option value="">—</option>${allTasks().map(t=>`<option value="${esc(t.id)}" ${c.taskId===t.id?'selected':''}>${esc(t.id)} · ${esc(trunc(t.task,40))}</option>`).join('')}</select></label>
+      <label class="field full"><span>הערות</span><textarea class="inp" data-f="notes">${esc(c.notes)}</textarea></label>
+    </div>
+    ${commentBox('contacts',id)}
+  </div>
+  <div class="dr-f"><button class="btn danger sm" data-a="delete">${ic('trash','sm')} מחיקה</button><span style="flex:1"></span><button class="btn pri" data-a="closeDrawer">סיום</button></div>`;
+  if(c._new) delete c._new;
+  openDrawer(html,'contacts',id);
+}
+
+function decisionDrawer(id){
+  const d = S.decisions[id]; if(!d) return;
+  const t = S.tasks[d.taskId];
+  const html = `${drHead('החלטה #'+esc(d.no))}
+  <div class="dr-b">
+    <textarea class="title-inp" rows="2" data-f="title" aria-label="ההחלטה" ${d._new?'data-autofocus':''}>${esc(d.title)}</textarea>
+    ${t?`<div class="dep" data-a="openTask" data-id="${esc(t.id)}">${pill(effStatus(t))}<span class="x">${esc(t.task)}</span><span class="xs faint">${esc(t.owner)} · ${fmt(tDue(t))}</span></div>`:''}
+    <section style="padding:14px;border-radius:12px;background:${d.outcome?'var(--done-bg)':'var(--surface-2)'};border:1px solid var(--line)">
+      <h3 style="margin-bottom:8px">${d.outcome&&d.decidedAt?'✓ מה הוחלט':'📝 תיעוד ההחלטה'}</h3>
+      <textarea class="inp" data-f="outcome" placeholder="מה הוחלט? (למשל: סוגרים 12 מ״ר מהמרפסת, בלי פרגולה)">${esc(d.outcome)}</textarea>
+      <div class="fgrid" style="margin-top:10px"><label class="field"><span>תאריך החלטה</span><input class="inp" type="date" value="${esc(d.decidedAt)}" data-f="decidedAt"></label>
+      <div class="field" style="justify-content:flex-end">${!d.decidedAt?`<button class="btn pri" data-a="markDecided">✓ סימון כהוחלט</button>`:`<span class="small muted">${person(d.decidedBy)?'תועד ע״י '+esc(person(d.decidedBy).name):''}</span>`}</div></div>
+    </section>
+    <div class="fgrid">
+      <label class="field full"><span>למה עכשיו</span><textarea class="inp" data-f="why">${esc(d.why)}</textarea></label>
+      <label class="field"><span>תלות / מועד</span><input class="inp" value="${esc(d.dep)}" data-f="dep"></label>
+      <label class="field"><span>משימה ראשית</span><select class="inp" data-f="taskId"><option value="">—</option>${allTasks().map(x=>`<option value="${esc(x.id)}" ${d.taskId===x.id?'selected':''}>${esc(x.id)} · ${esc(trunc(x.task,30))}</option>`).join('')}</select></label>
+      <label class="field full"><span>משימות קשורות</span><input class="inp" dir="ltr" value="${esc(d.related)}" data-f="related"></label>
+      <label class="field full"><span>הערות</span><textarea class="inp" data-f="notes">${esc(d.notes)}</textarea></label>
+    </div>
+    ${commentBox('decisions',id)}
+  </div>
+  <div class="dr-f"><button class="btn danger sm" data-a="delete">${ic('trash','sm')} מחיקה</button><span style="flex:1"></span><button class="btn pri" data-a="closeDrawer">סיום</button></div>`;
+  if(d._new) delete d._new;
+  openDrawer(html,'decisions',id);
+}
+
+function milestoneDrawer(id){
+  const m = S.milestones[id]; if(!m) return;
+  const html = `${drHead('אבן דרך · '+esc(m.id))}
+  <div class="dr-b">
+    <textarea class="title-inp" rows="1" data-f="name">${esc(m.name)}</textarea>
+    <div class="active-dates">📍 תאריך פעיל: <b>${fmtY(msDate(m))}</b><span class="xs faint" style="margin-inline-start:auto">${relDays(dn(msDate(m))-dn(today()))}</span></div>
+    <div class="fgrid">
+      <label class="field"><span>תרחיש A (מפתח 1.12)</span><input class="inp" type="date" value="${esc(m.early)}" data-f="early"></label>
+      <label class="field"><span>תרחיש B (מפתח 5.1)</span><input class="inp" type="date" value="${esc(m.late)}" data-f="late"></label>
+      <label class="field full"><span>תנאי / משימות</span><input class="inp" dir="ltr" value="${esc(m.cond)}" data-f="cond"></label>
+      <label class="field full"><span>הערות</span><textarea class="inp" data-f="notes">${esc(m.notes)}</textarea></label>
+    </div>
+    <div class="deps">${String(m.cond||'').split(/[,\s]+/).map(x=>S.tasks[x]).filter(Boolean).map(x=>`<div class="dep" data-a="openTask" data-id="${esc(x.id)}">${pill(effStatus(x))}<span class="x">${esc(x.task)}</span><span class="xs faint">${esc(x.id)}</span></div>`).join('')}</div>
+  </div>
+  <div class="dr-f"><span style="flex:1"></span><button class="btn pri" data-a="closeDrawer">סיום</button></div>`;
+  openDrawer(html,'milestones',id);
+}
+const DRAWERS = {tasks:taskDrawer, items:itemDrawer, contacts:contactDrawer, decisions:decisionDrawer, milestones:milestoneDrawer};
+const ROUTE_OF = {tasks:'task', items:'item', contacts:'contact', decisions:'decision', milestones:'milestone'};
+
+/* ============================ popover / toast / modal ============================ */
+function showPop(anchor, html){
+  const p=$('#pop'); p.innerHTML=html; p.classList.add('on');
+  const r=anchor.getBoundingClientRect(); const pw=p.offsetWidth, ph=p.offsetHeight;
+  let top = r.bottom+6; if(top+ph > innerHeight-10) top = Math.max(10, r.top-ph-6);
+  let left = r.right - pw; if(left<10) left = Math.min(r.left, innerWidth-pw-10);
+  p.style.top=top+'px'; p.style.left=Math.max(10,left)+'px';
+}
+const hidePop = () => $('#pop').classList.remove('on');
+function toast(msg, undo){
+  const t=$('#toast'); t.innerHTML = `<span>${esc(msg)}</span>${undo?'<button data-a="undo">ביטול</button>':''}`;
+  toast.undo = undo; t.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('on'), undo?5000:2600);
+}
+function modal(html){ $('#modalBox').innerHTML = html; $('#modal').classList.add('on'); }
+const closeModal = () => $('#modal').classList.remove('on');
+function pickMeModal(force){
+  modal(`<h2>מי משתמש/ת באפליקציה?</h2><p class="muted" style="margin:0">כך נדע להציג "המשימות שלי", לשייך הערות ואישורים, ולתעד מי שינה מה. אפשר להחליף בכל רגע בלחיצה על העיגול למעלה.</p>
+  <div class="who">${people().map(p=>`<button data-a="setMe" data-v="${esc(p.id)}">${avatar(p)}${esc(p.name)}</button>`).join('')}</div>
+  ${force?'':'<div style="text-align:center;margin-top:14px"><button class="btn ghost" data-a="closeModal">סגירה</button></div>'}`);
+}
+
+/* weekly summary */
+function weeklyText(){
+  const td=today(), wk=addDays(td,-7), nx=addDays(td,7);
+  const ts=visTasks();
+  const closedIds = new Set(Object.values(S.activity).filter(a=>a.ts>=Date.now()-7*864e5 && a.ref?.col==='tasks' && /הושלם/.test(a.text)).map(a=>a.ref.id));
+  const closed = ts.filter(t=>t.status==='הושלם' && (closedIds.has(t.id) || (t.updatedAt && t.updatedAt>=Date.now()-7*864e5)));
+  const late = ts.filter(t=>effStatus(t)==='באיחור');
+  const decs = decisionsSorted().filter(d=>decStatus(d)!=='הושלם').filter(d=>{ const t=S.tasks[d.taskId]; return t && tDue(t)<=addDays(td,21); });
+  const next = ts.filter(t=>!isClosed(t) && effStatus(t)!=='באיחור' && (tStart(t)||tDue(t))<=nx).sort((a,b)=>(tDue(a)||'').localeCompare(tDue(b)||''));
+  const stuck = ts.filter(t=>['תקוע','ממתין'].includes(t.status));
+  const L = (arr, f) => arr.length ? arr.map(f).join('\n') : '• —';
+  return `🏡 *בית אלון — סיכום לישיבה* (${fmtY(td)})
+🔑 מפתח: ${fmtY(keyActive())} (${relDays(dn(keyActive())-dn(td))}) · תרחיש ${scenario()}
+
+✅ *נסגר בשבוע האחרון*
+${L(closed, t=>`• ${t.task}`)}
+
+⏰ *באיחור*
+${L(late, t=>`• ${t.task} — ${t.owner} (יעד ${fmt(tDue(t))})`)}
+
+⛔ *תקוע / ממתין*
+${L(stuck, t=>`• ${t.task} — ${t.owner}`)}
+
+⚖️ *החלטות שנדרשות*
+${L(decs, d=>`• #${d.no} ${d.title} (יעד ${fmt(tDue(S.tasks[d.taskId]))})`)}
+
+📅 *השבוע הקרוב*
+${L(next, t=>`• ${t.task} — ${t.owner} (${fmt(tDue(t))})`)}
+`;
+}
+
+/* ============================ export / import ============================ */
+function loadScript(src){ return new Promise((res,rej)=>{ if(window.XLSX) return res(); const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+const XLSX_SRC = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+async function exportXlsx(){
+  try { await loadScript(XLSX_SRC); } catch { toast('לא ניתן לטעון את רכיב האקסל'); return; }
+  const X = window.XLSX, wb = X.utils.book_new();
+  const add = (name, rows) => { const ws = X.utils.json_to_sheet(rows); ws['!cols'] = Object.keys(rows[0]||{}).map(k=>({wch: Math.min(50, Math.max(8, k.length+2, ...rows.map(r=>String(r[k]??'').length)))})); X.utils.book_append_sheet(wb, ws, name); };
+  add('משימות', allTasks().map(t=>({'ID':t.id,'שלב':t.phase,'משימה':t.task,'אחראי':t.owner,'עדיפות':t.prio,'סטטוס':t.status,'מצב מחושב':effStatus(t),'התקדמות %':Math.round(progress(t)*100),'התחלה (פעיל)':tStart(t),'יעד (פעיל)':tDue(t),'תלויות':t.deps,'Mode':t.mode,'התחלה (מוקדם)':t.sA,'יעד (מוקדם)':t.dA,'התחלה (מאוחר)':t.sB,'יעד (מאוחר)':t.dB,'תיאור':t.desc,'מידע/מסמכים נדרשים':t.docs,'הערות':t.notes})));
+  add('אבני דרך', msSorted().map(m=>({'#':m.id,'אבן דרך':m.name,'מוקדם':m.early,'מאוחר':m.late,'תאריך פעיל':msDate(m),'תנאי':m.cond,'הערות':m.notes})));
+  add('החלטות', decisionsSorted().map(d=>({'#':d.no,'החלטה':d.title,'למה עכשיו':d.why,'תלות':d.dep,'משימה':d.taskId,'מצב':decStatus(d),'מה הוחלט':d.outcome,'תאריך החלטה':d.decidedAt,'הערות':d.notes})));
+  add('ספקים והצעות', Object.values(S.contacts).sort((a,b)=>(a.ord??99)-(b.ord??99)).map(c=>({'תחום':c.domain,'שם':c.name,'חברה':c.company,'טלפון':c.phone,'אימייל':c.email,'הצעה 1':c.q1,'הצעה 2':c.q2,'הצעה 3':c.q3,'נבחרה':c.chosen,'סטטוס':c.status,'משימה':c.taskId,'הערות':c.notes})));
+  add('עיצוב ורכש', Object.values(S.items).map(i=>({'פריט':i.name,'חדר':i.room,'קטגוריה':i.cat,'מצב':i.status,'מחיר':i.price,'כמות':i.qty,'סה״כ':(Number(i.price)||0)*(Number(i.qty)||1),'ספק':i.vendor,'קישור':i.link,...Object.fromEntries(people().map(p=>[p.name,(i.approvals||{})[p.id]==='yes'?'👍':(i.approvals||{})[p.id]==='no'?'👎':''])),'הערות':i.notes})));
+  wb.Workbook = {Views:[{RTL:true}]};
+  X.writeFile(wb, `בית_אלון_${today()}.xlsx`);
+}
+function exportJson(){
+  const o = {exportedAt:new Date().toISOString(), settings:S.settings}; COLS.forEach(c=>o[c]=S[c]);
+  const blob = new Blob([JSON.stringify(o,null,1)], {type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`בית_אלון_גיבוי_${today()}.json`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+async function importJson(file){
+  let o; try { o = JSON.parse(await file.text()); } catch { toast('הקובץ אינו גיבוי תקין'); return; }
+  if(!o.tasks){ toast('הקובץ אינו גיבוי תקין'); return; }
+  if(!confirm('השחזור יחליף את כל הנתונים הנוכחיים בנתוני הגיבוי. להמשיך?')) return;
+  const ops=[]; COLS.forEach(c=>{ Object.keys(S[c]).forEach(id=>{ if(!(o[c]||{})[id]) ops.push({op:'del',col:c,id}); }); Object.values(o[c]||{}).forEach(d=>ops.push({op:'put',col:c,doc:d})); });
+  if(o.settings) ops.push({op:'settings',data:o.settings});
+  await write(()=> backend.bulk(ops)); await log('שחזר/ה נתונים מגיבוי'); toast('הנתונים שוחזרו');
+}
+async function importXlsx(file){
+  try { await loadScript(XLSX_SRC); } catch { toast('לא ניתן לטעון את רכיב האקסל'); return; }
+  const X = window.XLSX; const wb = X.read(await file.arrayBuffer(), {cellDates:true});
+  const ws = wb.Sheets['משימות']; if(!ws){ toast('לא נמצאה לשונית "משימות"'); return; }
+  const rows = X.utils.sheet_to_json(ws, {header:1, raw:true});
+  const hi = rows.findIndex(r=>r && r[0]==='ID'); if(hi<0){ toast('לא נמצאה שורת כותרת עם ID'); return; }
+  const d = v => v instanceof Date ? `${v.getFullYear()}-${String(v.getMonth()+1).padStart(2,'0')}-${String(v.getDate()).padStart(2,'0')}` : (typeof v==='string' && /^\d{4}-\d\d-\d\d/.test(v) ? v.slice(0,10) : '');
+  const s = v => v==null ? '' : String(v);
+  const ops=[]; let nNew=0, nUpd=0;
+  rows.slice(hi+1).forEach(r=>{ const id=s(r[0]).trim(); if(!/^T-\d+/.test(id)) return;
+    const cur = S.tasks[id]; const t = Object.assign({}, cur||{}, {id, phase:s(r[1]), task:s(r[2]), owner:s(r[3]), prio:s(r[4])||'בינונית', status:SETTABLE.includes(s(r[5]))?s(r[5]):'לא התחיל', pm: (r[7]===''||r[7]==null)?null:(Number(r[7])<=1?Math.round(Number(r[7])*100):Number(r[7])), deps:s(r[12]).replace('—',''), mode:s(r[13])||'F', sA:d(r[14]), dA:d(r[15]), sB:d(r[16]), dB:d(r[17]), desc:s(r[18]), docs:s(r[19]), notes:s(r[20])});
+    cur ? nUpd++ : nNew++; ops.push({op:'put',col:'tasks',doc:t}); });
+  if(!ops.length){ toast('לא נמצאו משימות בקובץ'); return; }
+  if(!confirm(`נמצאו ${ops.length} משימות: ${nUpd} יעודכנו ו-${nNew} יתווספו. הערות שנכתבו באפליקציה יישמרו. להמשיך?`)) return;
+  await write(()=> backend.bulk(ops)); await log(`עדכן/ה ${ops.length} משימות מקובץ אקסל`); toast('המשימות עודכנו מהאקסל');
+}
+
+/* ============================ event handling ============================ */
+const A = {
+  openTask: el => { hidePop(); taskDrawer(el.dataset.id); history.replaceState(null,'',`#/${route}/task:${el.dataset.id}`); },
+  openItem: el => { itemDrawer(el.dataset.id); history.replaceState(null,'',`#/${route}/item:${el.dataset.id}`); },
+  openContact: el => contactDrawer(el.dataset.id),
+  openDecision: el => { decisionDrawer(el.dataset.id); history.replaceState(null,'',`#/${route}/decision:${el.dataset.id}`); },
+  openMilestone: el => milestoneDrawer(el.dataset.id),
+  openRef: el => { const f = DRAWERS[el.dataset.col]; if(f && S[el.dataset.col]?.[el.dataset.id]) f(el.dataset.id); else toast('הפריט כבר לא קיים'); },
+  closeDrawer: () => closeDrawer(),
+  statusMenu: (el) => { const id=el.dataset.id, t=S.tasks[id]; showPop(el, SETTABLE.map(s=>`<button class="s-${ST[s]}" data-a="popStatus" data-id="${esc(id)}" data-v="${s}" role="menuitem"><i></i>${s}${t.status===s?' ✓':''}</button>`).join('')); },
+  popStatus: el => { hidePop(); setTaskStatus(el.dataset.id, el.dataset.v); },
+  drStatus: el => { const id=drawer.id; setTaskStatus(id, el.dataset.v, {silent:true}); setTimeout(()=>{ if(drawer&&drawer.id===id) { const sc=$('.dr-b').scrollTop; taskDrawer(id); $('.dr-b').scrollTop=sc; } },30); },
+  drItemStatus: el => { const id=drawer.id, i=S.items[id]; const v=el.dataset.v; write(async()=>{ await backend.patch('items',id,Object.assign({status:v},stamp())); await log(`העביר/ה את "${i.name}" ל-${v}`, {col:'items',id}); }).then(()=>{ if(drawer&&drawer.id===id){ const sc=$('.dr-b').scrollTop; itemDrawer(id); $('.dr-b').scrollTop=sc; } }); },
+  drContactStatus: el => { const id=drawer.id, c=S.contacts[id]; const v=el.dataset.v; write(async()=>{ await backend.patch('contacts',id,{status:v}); await log(`עדכן/ה את "${c.domain}" ל-${v}`, {col:'contacts',id}); }).then(()=>{ if(drawer&&drawer.id===id) contactDrawer(id); }); },
+  vote: el => { if(!me()){ pickMeModal(); return; } const id=el.dataset.id, i=S.items[id]; const cur=(i.approvals||{})[prefs.me]; const v = cur===el.dataset.v ? null : el.dataset.v;
+    write(async()=>{ await backend.patch('items', id, {['approvals.'+prefs.me]: v}); if(v) await log(`${v==='yes'?'👍 אהב/ה':'👎 לא אהב/ה'} את "${i.name}"`, {col:'items',id}); }).then(()=>{ if(drawer&&drawer.id===id) itemDrawer(id); }); },
+  addComment: () => { const ta=$('#cmtText'); const text=ta.value.trim(); if(!text||!drawer) return; const {col,id}=drawer; const doc=S[col][id];
+    const c = {ts:Date.now(), who:prefs.me||'', whoName:myName(), text}; ta.value='';
+    write(async()=>{ await backend.addComment(col,id,c); await log(`הגיב/ה על "${doc.task||doc.name||doc.title||doc.domain}": ${trunc(text,60)}`, {col,id}); }).then(()=>refreshDrawer()); },
+  delete: () => { if(!drawer) return; const {col,id}=drawer; const doc=clone(S[col][id]); const nm = doc.task||doc.name||doc.title||doc.domain;
+    if(!confirm(`למחוק את "${nm}"?`)) return; closeDrawer();
+    write(async()=>{ await backend.del(col,id); await log(`מחק/ה את "${nm}"`); }); toast('נמחק', ()=> write(()=>backend.put(col,doc))); },
+  markDecided: () => { const id=drawer.id, d=S.decisions[id]; const t=S.tasks[d.taskId];
+    write(async()=>{ await backend.patch('decisions',id,{decidedAt:today(), decidedBy:prefs.me||''}); await log(`תיעד/ה החלטה: "${d.title}"${d.outcome?' — '+trunc(d.outcome,60):''}`, {col:'decisions',id}); if(t && !isClosed(t) && confirm(`לסמן גם את המשימה "${t.task}" כהושלמה?`)) await backend.patch('tasks',t.id,Object.assign({status:'הושלם'},stamp())); }).then(()=>decisionDrawer(id)); },
+  newTask: () => { const id=nextTaskId(); const td=today(); const f=prefs.taskFilter;
+    const t = {id, phase: f.phase || (route==='tasks'?'':'0 איסוף מידע') || '0 איסוף מידע', task:'משימה חדשה', owner: me()?.name || '', prio:'בינונית', status:'לא התחיל', deps:'', mode:'F', sA:td, dA:addDays(td,7), sB:td, dB:addDays(td,7), desc:'', docs:'', notes:'', pm:null, createdAt:Date.now(), createdBy:prefs.me||''};
+    if(!t.phase) t.phase='0 איסוף מידע';
+    write(async()=>{ await backend.put('tasks',t); await log('הוסיף/ה משימה חדשה', {col:'tasks',id}); }).then(()=>{ S.tasks[id] && (S.tasks[id]._new=true); taskDrawer(id); }); },
+  newItem: () => { const id=uid('I'); const i={id,name:'פריט חדש',room:prefs.shopRoom||'סלון',cat:'ריהוט',status:'רעיון',price:null,qty:1,link:'',img:'',vendor:'',taskId:'',notes:'',approvals:{},createdAt:Date.now(),createdBy:prefs.me||''};
+    write(async()=>{ await backend.put('items',i); await log('הוסיף/ה פריט לעיצוב ורכש', {col:'items',id}); }).then(()=>{ S.items[id] && (S.items[id]._new=true); itemDrawer(id); }); },
+  newContact: () => { const id=uid('C'); const c={id,domain:'תחום חדש',name:'',company:'',phone:'',email:'',q1:null,q2:null,q3:null,chosen:null,status:'לא התחיל',taskId:'',notes:'',ord:999};
+    write(()=>backend.put('contacts',c)).then(()=>{ S.contacts[id] && (S.contacts[id]._new=true); contactDrawer(id); }); },
+  newDecision: () => { const id=uid('D'); const n = decisionsSorted().filter(d=>/^\d+$/.test(d.no)).length+1; const d={id,no:String(n),title:'החלטה חדשה',why:'',dep:'',taskId:'',related:'',notes:'',outcome:'',decidedAt:'',decidedBy:'',ord:50+n};
+    write(()=>backend.put('decisions',d)).then(()=>{ S.decisions[id] && (S.decisions[id]._new=true); decisionDrawer(id); }); },
+  setScenario: el => { const v=el.dataset.v; if(scenario()===v) return; write(async()=>{ await backend.setSettings({scenario:v}); await log(`החליף/ה לתרחיש ${v}`); }); toast(`תרחיש ${v} פעיל — כל התאריכים עודכנו`); },
+  homeMine: el => { prefs.homeMine = el.dataset.v==='1'; savePrefs(); render(); },
+  filterStatus: (el,e) => { e.preventDefault(); prefs.taskFilter = Object.assign(prefs.taskFilter,{status:el.dataset.v, hideDone:false, phase:'', owner:'', prio:'', q:''}); savePrefs(); location.hash='#/tasks'; },
+  filterPhase: (el,e) => { e.preventDefault(); prefs.taskFilter = Object.assign(prefs.taskFilter,{phase:el.dataset.v, status:'', group:'phase'}); savePrefs(); location.hash='#/tasks'; },
+  toggleHideDone: () => { prefs.taskFilter.hideDone=!prefs.taskFilter.hideDone; savePrefs(); render(); },
+  taskGroup: el => { prefs.taskFilter.group=el.dataset.v; savePrefs(); render(); },
+  clearFilters: () => { Object.assign(prefs.taskFilter,{q:'',owner:'',phase:'',status:'',prio:''}); savePrefs(); render(); },
+  boardOwner: el => { prefs.boardOwner=el.dataset.v; savePrefs(); render(); },
+  gHideDone: () => { prefs.gHideDone=!prefs.gHideDone; savePrefs(); render(); },
+  gZoom: el => { prefs.gZoom=+el.dataset.v; savePrefs(); const w=$('.gwrap'); if(w) delete w.dataset.scrolled; document.querySelector('[data-keepscroll="gantt"]')?.removeAttribute('data-keepscroll'); render(); },
+  shopRoom: el => { prefs.shopRoom=el.dataset.v; savePrefs(); render(); },
+  shopStatus: el => { prefs.shopStatus=el.dataset.v; savePrefs(); render(); },
+  toggleOther: () => { prefs.showOther=!prefs.showOther; savePrefs(); render(); },
+  pickMe: () => pickMeModal(false),
+  setMe: el => { prefs.me=el.dataset.v; savePrefs(); closeModal(); render(); toast(`שלום ${me().name} 👋`); },
+  closeModal: () => closeModal(),
+  weekly: () => { const txt=weeklyText(); modal(`<h2>סיכום לישיבה השבועית</h2><pre class="sum" id="sumTxt">${esc(txt)}</pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-a="copySum">${ic('clip','sm')} העתקה</button><a class="btn" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">שליחה בוואטסאפ</a><span style="flex:1"></span><button class="btn ghost" data-a="closeModal">סגירה</button></div>`); },
+  copySum: () => { navigator.clipboard?.writeText($('#sumTxt').textContent).then(()=>toast('הועתק ✓'), ()=>toast('ההעתקה נכשלה')); },
+  shareTask: el => { const t=S.tasks[el.dataset.id]; const url = location.href.split('#')[0] + `#/tasks/task:${t.id}`; const text=`${t.task} (${t.id})`;
+    if(navigator.share) navigator.share({title:'בית אלון', text, url}).catch(()=>{}); else navigator.clipboard?.writeText(url).then(()=>toast('הקישור הועתק')); },
+  undo: () => { const u=toast.undo; $('#toast').classList.remove('on'); toast.undo=null; if(u) u(); },
+  exportXlsx: () => exportXlsx(),
+  exportJson: () => exportJson(),
+  print: () => print(),
+  resetLocal: () => { if(!confirm('לאפס את כל הנתונים המקומיים ולחזור לנתוני האקסל המקוריים? (מומלץ לגבות קודם)')) return; seedInto(S); LocalBackend.persist(); render(); toast('אופס לנתוני הפתיחה'); },
+  signOut: () => backend.signOut(),
+  login: () => FirebaseBackend.login()
+};
+document.addEventListener('click', e=>{
+  if(e.target.closest('[data-stop]')) return;
+  const el = e.target.closest('[data-a]');
+  if(!$('#pop').contains(e.target) && !(el && el.dataset.a==='statusMenu')) hidePop();
+  if(el && e.target.closest('#modal') && !e.target.closest('#modalBox') ) { closeModal(); return; }
+  if(!el){ if(e.target.id==='modal') closeModal(); return; }
+  const fn = A[el.dataset.a]; if(!fn) return;
+  if(el.tagName==='A' && !['filterStatus','filterPhase'].includes(el.dataset.a)) e.preventDefault();
+  e.stopPropagation();
+  fn(el, e);
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ if($('#pop').classList.contains('on')) hidePop(); else if($('#modal').classList.contains('on')) closeModal(); else closeDrawer(); }
+  if(e.key==='Enter' && (e.metaKey||e.ctrlKey) && e.target.id==='cmtText') A.addComment();
+  if(e.key==='/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && route==='tasks'){ e.preventDefault(); $('#tq')?.focus(); }
+  if((e.key==='Enter'||e.key===' ') && e.target.matches('[data-a]:not(button):not(a)')){ e.preventDefault(); e.target.click(); }
+});
+// task filter inputs
+let qT;
+document.addEventListener('input', e=>{
+  const el=e.target;
+  if(el.dataset.tf==='q'){ clearTimeout(qT); qT=setTimeout(()=>{ prefs.taskFilter.q=el.value; savePrefs(); render(); }, 160); }
+});
+document.addEventListener('change', e=>{
+  const el=e.target;
+  if(el.dataset.tf && el.dataset.tf!=='q'){ prefs.taskFilter[el.dataset.tf]=el.value; savePrefs(); render(); return; }
+  if(el.dataset.pref){ prefs[el.dataset.pref]=el.value; savePrefs(); render(); return; }
+  if(el.dataset.file){ const f=el.files[0]; if(f) (el.dataset.file==='json'?importJson:importXlsx)(f); el.value=''; return; }
+  if(el.dataset.set){ let v = el.value; if('num' in el.dataset) v = numOrNull(v); const k=el.dataset.set;
+    write(async()=>{ await backend.setSettings({[k]:v}); if(k==='keyActual') await log(v?`קבע/ה מועד מפתח בפועל: ${fmtY(v)}`:'ביטל/ה את מועד המפתח בפועל'); if(k==='totalBudget') await log(`עדכן/ה תקציב כולל: ${money(v)}`); });
+    if(k==='keyActual') toast(v?'כל המשימות הצמודות למפתח הוזזו':'חזרה לתאריכי התרחיש'); return; }
+  if(el.dataset.person!=null){ const arr=clone(people()); arr[+el.dataset.person][el.dataset.pf]=el.value.trim(); write(()=>backend.setSettings({people:arr})); return; }
+  if(el.dataset.f && drawer){
+    const {col,id}=drawer; const doc=S[col][id]; if(!doc) return;
+    let v = el.value; if('num' in el.dataset) v = numOrNull(v);
+    if(el.dataset.f==='title'||el.dataset.f==='task'||el.dataset.f==='name'||el.dataset.f==='domain'){ v=v.trim(); if(!v) { el.value=doc[el.dataset.f]; return; } }
+    if(doc[el.dataset.f]===v) return;
+    const f = el.dataset.f;
+    write(async()=>{ await backend.patch(col,id,Object.assign({[f]:v}, col==='tasks'||col==='items'?stamp():{})); if(['task','sA','dA','sB','dB','owner','mode'].includes(f) && col==='tasks') await log(`עדכן/ה ${({task:'שם',owner:'אחראי',mode:'סוג תזמון'})[f]||'תאריך'} של "${doc.task}"`, {col,id}); });
+    if(['mode','sA','dA','sB','dB','deps'].includes(f)) setTimeout(()=>{ if(drawer&&drawer.id===id){ const sc=$('.dr-b').scrollTop; DRAWERS[col](id); $('.dr-b').scrollTop=sc; } },60);
+  }
+});
+// swipe-down to close bottom sheet
+(()=>{ let y0=null; const d=$('#drawer');
+  d.addEventListener('touchstart', e=>{ const b=d.querySelector('.dr-b'); if(e.target.closest('.dr-h') || (b && b.scrollTop<=0 && e.target.closest('.dr-b')===null)) y0=e.touches[0].clientY; else y0=null; }, {passive:true});
+  d.addEventListener('touchmove', e=>{ if(y0==null) return; const dy=e.touches[0].clientY-y0; if(dy>0) d.style.transform=`translateY(${dy}px)`; }, {passive:true});
+  d.addEventListener('touchend', e=>{ if(y0==null) return; const dy=(e.changedTouches[0].clientY-y0); d.style.transform=''; if(dy>110) closeDrawer(); y0=null; });
+})();
+
+function onRoute(){
+  const arg = parseRoute();
+  if(route==='task' && arg){ route='tasks'; }
+  render(); $('#view')?.focus({preventScroll:true}); if(!arg) scrollTo(0,0);
+  if(arg){ const [kind,id] = arg.split(':'); const map={task:'tasks',item:'items',decision:'decisions',contact:'contacts',milestone:'milestones'}; const col=map[kind]; if(col && S[col]?.[id]) DRAWERS[col](id); }
+  else closeDrawer();
+}
+window.addEventListener('hashchange', onRoute);
+
+/* ============================ login / denied ============================ */
+function renderLogin(){
+  $('#root').innerHTML = `<div class="login"><div class="box"><span class="brand" style="justify-content:center"><span class="logo" style="width:64px;height:64px;border-radius:18px">${LOGO}</span></span>
+  <h1>בית אלון</h1><p class="muted">מרכז ניהול השיפוץ והלבשת הבית — לאריאל, רינת והאדריכלית.</p>
+  <button class="btn pri" style="height:50px;padding:0 26px;font-size:16px;margin-top:18px" data-a="login">התחברות עם Google</button>
+  <p class="xs faint" style="margin-top:18px">הגישה מוגבלת למיילים מורשים בלבד.</p></div></div>`;
+}
+function renderDenied(){
+  $('#root').innerHTML = `<div class="login"><div class="box"><h1>אין הרשאה 🔒</h1><p class="muted">המייל <span class="ltr">${esc(currentUser?.email||'')}</span> אינו ברשימת המורשים.<br>בקשו מאריאל להוסיף אותו לכללי האבטחה ב-Firebase.</p><button class="btn" data-a="signOut" style="margin-top:14px">התחברות עם חשבון אחר</button></div></div>`;
+  closeDrawer();
+}
+
+/* ============================ boot ============================ */
+(async function boot(){
+  if(FIREBASE_CONFIG){
+    backend = FirebaseBackend; syncState='cloud';
+    $('#root').innerHTML = `<div class="login"><div class="muted">טוען…</div></div>`;
+    try { await FirebaseBackend.init(); return; } catch(e){ console.error(e); $('#root').innerHTML = `<div class="login"><div class="box"><h1>שגיאת חיבור</h1><p class="muted">לא הצלחנו להתחבר ל-Firebase. בדקו את ה-config ואת החיבור לרשת.</p><p class="xs faint ltr">${esc(e.message)}</p></div></div>`; return; }
+  } else {
+    backend = LocalBackend; await LocalBackend.init();
+  }
+  startApp();
+})();
+function startApp(){ onRoute(); if(!me()) pickMeModal(true); }
+</script>
+</body>
+</html>
